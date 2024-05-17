@@ -6,11 +6,11 @@ function Layout() {
         <div className="Layout-container">
             <div className="Layout">
                 <div className="nav-bar">
-                    <img className="logo" src="./clockwork_text.svg"></img>
+                    <img className="logo" alt="logo" src="./clockwork_text.svg"></img>
                     <div className="links">
                         <Link className="nav-link" to="/">Home</Link>
                         <Link className="nav-link" to="/users">Users</Link>
-                        <Link className="nav-link" to="/signup">Sign Up</Link>
+                        <Link className="nav-link emphasized" to="/signup">Sign Up</Link>
                     </div>
                 </div>
             </div>

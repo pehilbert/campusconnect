@@ -84,17 +84,17 @@ app.get("/users/:username", async (req, res) => {
         const users = db.collection("users");
 
         try {
-            const result = await users.find({username : req.params.username}).toArray();
+            const result = await users.findOne({username : req.params.username});
 
-            if (result.length == 0) {
+            if (!result) {
                 console.log("User not found");
 
                 res.status(404).send({
                     message : "User not found"
                 })
             } else {
-                console.log("User found:", result[0].username);
-                res.status(201).send(result[0]);
+                console.log("User found:", result);
+                res.status(201).send(result);
             }
         } catch (error) {
             console.error("Error fetching user:", error);
@@ -163,7 +163,7 @@ app.post("/createuser", async (req, res) => {
 
             res.status(400).send({
                 message : msg
-            })
+            });
         }
 
         client.close();
