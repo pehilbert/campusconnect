@@ -48,27 +48,70 @@ app.get("/test", (req, res) => {
 });
 
 // Fetch users
-app.get("/allusers", (req, res) => {
+app.get("/allusers", async (req, res) => {
     console.log("Request to fetch users");
 
-    connectToMongo()
-        .then(client => {
-            let db = client.db(dbName);
-            let collection = db.collection("users");
+    let client;
+    try {
+        client = await connectToMongo();  // Ensure you handle MongoDB connection properly
+        const db = client.db(dbName);
+        const users = db.collection("users");
 
-            collection.find({}).toArray()
-                .then(result => {
-                    console.log("Users fetched:");
-                    console.log(result);
-                    res.json(result);
-                })
-                .catch(error => {
-                    console.error("Error fetching users", error);
-                })
-                .finally(() => {
-                    client.close();
-                });
+        const result = await users.find({}).toArray();
+        console.log("Users fetched:", result);
+        res.json(result);
+    } catch (error) {
+        console.error("Error fetching users or connecting to database:", error);
+        res.status(500).send({
+            error: "Error fetching users"
         });
+    } finally {
+        if (client) {
+            client.close(); // Ensures that the database connection is closed even if an error occurs
+        }
+    }
+});
+
+// Route to crate a new user
+app.post("/createuser", async (req, res) => {
+    console.log("Request to create user");
+
+    if (!req.body.username || !req.body.password || req.body.email) {
+        console.log("Not all information was provided");
+
+        return res.status(400).send({
+            error: "Must provide username, password, and email"
+        });
+    }
+
+    try {
+        const client = await connectToMongo();
+        const db = client.db(dbName);
+        const users = db.collection("users");
+
+        const result = await users.insertOne({
+            username: req.body.username,
+            password: req.body.password,
+            email: req.body.email
+        });
+
+        console.log(`Successfully added user with the _id: ${result.insertedId}`);
+        console.log("Result object:", result);
+
+        res.status(201).send({ 
+            message: "User created successfully", 
+            userId: result.insertedId 
+        });
+    } catch (error) {
+        console.error("Error during user creation or database connection:", error);
+        res.status(500).send({
+            error: "Error adding user"
+        });
+    } finally {
+        if (client) {
+            client.close();
+        }
+    }
 });
 
 // Start the server
