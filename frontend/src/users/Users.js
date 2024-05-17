@@ -4,7 +4,7 @@ function Users() {
     const [users, setUsers] = useState([]);
 
     useEffect(() => {
-        fetch("http://localhost:5000/allusers")
+        fetch("http://localhost:5000/users")
             .then(result => result.json())
             .then(jsonResult => {
                 console.log(jsonResult);

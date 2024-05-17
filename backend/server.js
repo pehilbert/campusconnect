@@ -48,27 +48,67 @@ app.get("/test", (req, res) => {
 });
 
 // Fetch users
-app.get("/allusers", async (req, res) => {
-    console.log("Request to fetch users");
+app.get("/users", async (req, res) => {
+    console.log("Request to get all users");
 
-    let client;
     try {
-        client = await connectToMongo();  // Ensure you handle MongoDB connection properly
+        client = await connectToMongo();
         const db = client.db(dbName);
         const users = db.collection("users");
 
-        const result = await users.find({}).toArray();
-        console.log("Users fetched:", result);
-        res.json(result);
-    } catch (error) {
-        console.error("Error fetching users or connecting to database:", error);
-        res.status(500).send({
-            error: "Error fetching users"
-        });
-    } finally {
-        if (client) {
-            client.close(); // Ensures that the database connection is closed even if an error occurs
+        try {
+            const result = await users.find({}).toArray();
+            res.status(201).send(result);
+        } catch (error) {
+            console.error("Error fetching user:", error);
+            res.status(500).send({
+                message : "Something went wrong fetching users"
+            });
         }
+
+        client.close();
+    } catch (error) {
+        console.error("Error connecting to database:", error);
+        res.status(500).send({
+            message : "Could not connect to database"
+        });
+    }
+});
+
+app.get("/users/:username", async (req, res) => {
+    console.log("Request to get user: " + req.params.username);
+
+    try {
+        client = await connectToMongo();
+        const db = client.db(dbName);
+        const users = db.collection("users");
+
+        try {
+            const result = await users.find({username : req.params.username}).toArray();
+
+            if (result.length == 0) {
+                console.log("User not found");
+
+                res.status(404).send({
+                    message : "User not found"
+                })
+            } else {
+                console.log("User found:", result[0].username);
+                res.status(201).send(result[0]);
+            }
+        } catch (error) {
+            console.error("Error fetching user:", error);
+            res.status(500).send({
+                message : "Something went wrong fetching user"
+            });
+        }
+
+        client.close();
+    } catch (error) {
+        console.error("Error connecting to database:", error);
+        res.status(500).send({
+            message : "Could not connect to database"
+        });
     }
 });
 
@@ -84,6 +124,7 @@ app.post("/createuser", async (req, res) => {
             error: "Must provide username, password, and email"
         });
     }
+    
     try {
         const client = await connectToMongo();
         const db = client.db(dbName);
