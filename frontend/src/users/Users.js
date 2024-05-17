@@ -19,7 +19,7 @@ function Users() {
         <div className="Users">
             <h1>Users:</h1>
             {users.map(user => (
-                <p>{user.firstName} {user.lastName}</p>
+                <p key={user.username}>{user.username}</p>
             ))}
         </div>
     );

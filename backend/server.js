@@ -75,42 +75,62 @@ app.get("/allusers", async (req, res) => {
 // Route to crate a new user
 app.post("/createuser", async (req, res) => {
     console.log("Request to create user");
+    console.log("Request body: " + req.body);
 
-    if (!req.body.username || !req.body.password || req.body.email) {
+    if (!req.body.username || !req.body.password || !req.body.email) {
         console.log("Not all information was provided");
 
         return res.status(400).send({
             error: "Must provide username, password, and email"
         });
     }
-
     try {
         const client = await connectToMongo();
         const db = client.db(dbName);
         const users = db.collection("users");
 
-        const result = await users.insertOne({
-            username: req.body.username,
-            password: req.body.password,
-            email: req.body.email
-        });
+        try {
+            const result = await users.insertOne({
+                username: req.body.username,
+                password: req.body.password,
+                email: req.body.email
+            });
 
-        console.log(`Successfully added user with the _id: ${result.insertedId}`);
-        console.log("Result object:", result);
+            console.log(`Successfully added user with the _id: ${result.insertedId}`);
+            console.log("Result object:", result);
 
-        res.status(201).send({ 
-            message: "User created successfully", 
-            userId: result.insertedId 
-        });
-    } catch (error) {
-        console.error("Error during user creation or database connection:", error);
-        res.status(500).send({
-            error: "Error adding user"
-        });
-    } finally {
-        if (client) {
-            client.close();
+            res.status(201).send({ 
+                message: "User created successfully", 
+                userId: result.insertedId 
+            });
+        } catch (error) {
+            console.error("Error creating user:", error);
+
+            let msg;
+
+            if (error.errorResponse) {
+                if (error.errorResponse.keyPattern.username) {
+                    msg = "Username already in use"
+                }
+
+                if (error.errorResponse.keyPattern.email) {
+                    msg = "Email already in use"
+                }
+            } else {
+                msg = "Something went wrong";
+            }
+
+            res.status(400).send({
+                message : msg
+            })
         }
+
+        client.close();
+    } catch (error) {
+        console.error("Error connecting to database:", error);
+        res.status(500).send({
+            message : "Something went wrong, try again later"
+        });
     }
 });
 
