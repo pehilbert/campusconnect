@@ -2,6 +2,8 @@ const url = "mongodb://localhost:27017";
 const bcrypt = require('bcrypt');
 const { MongoClient, Double } = require("mongodb");
 
+const saltRounds = 10;
+
 async function connectToMongo() {
     try {
         let client = await MongoClient.connect(url);
@@ -24,7 +26,7 @@ async function hashPasswords() {
                 let user = userDocs[i];
 
                 if (user.username && user.password) {
-                    let hashedPassword = await bcrypt.hash(user.password, 10);
+                    let hashedPassword = await bcrypt.hash(user.password, saltRounds);
                     console.log(user.password, "->", hashedPassword);
 
                     await users.updateOne({username : user.username}, {$set : {password : hashedPassword}}, {});

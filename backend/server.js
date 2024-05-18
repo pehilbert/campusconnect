@@ -1,12 +1,15 @@
 const express = require("express");
 const { MongoClient, Double } = require("mongodb");
 const cors = require("cors");
+const bcrypt = require("bcrypt");
 
 const app = express();
 const port = 5000;
 
 const url = "mongodb://localhost:27017";
 const dbName = "clockwork";
+
+const saltRounds = 10;
 
 // Define CORS for the app
 app.use(cors({
@@ -115,7 +118,7 @@ app.get("/users/:username", async (req, res) => {
 // Route to crate a new user
 app.post("/createuser", async (req, res) => {
     console.log("Request to create user");
-    console.log("Request body: " + req.body);
+    console.log("Request body: " + JSON.stringify(req.body));
 
     if (!req.body.username || !req.body.password || !req.body.email) {
         console.log("Not all information was provided");
@@ -131,9 +134,11 @@ app.post("/createuser", async (req, res) => {
         const users = db.collection("users");
 
         try {
+            let hashedPassword = await bcrypt.hash(req.body.password, saltRounds);
+
             const result = await users.insertOne({
                 username: req.body.username,
-                password: req.body.password,
+                password: hashedPassword,
                 email: req.body.email
             });
 
@@ -147,23 +152,15 @@ app.post("/createuser", async (req, res) => {
         } catch (error) {
             console.error("Error creating user:", error);
 
-            let msg;
-
-            if (error.errorResponse) {
-                if (error.errorResponse.keyPattern.username) {
-                    msg = "Username already in use"
-                }
-
-                if (error.errorResponse.keyPattern.email) {
-                    msg = "Email already in use"
-                }
+            // Checks for duplicate key error
+            if (error.code === 11000) {
+                // Extract field from error message
+                const field = error.message.split("index:")[1].split(" ")[0];
+                const msg = `${field.trim()} already in use`;
+                res.status(400).send({ message: msg });
             } else {
-                msg = "Something went wrong";
+                res.status(500).send({ message: "Something went wrong, try again later" });
             }
-
-            res.status(400).send({
-                message : msg
-            });
         }
 
         client.close();
@@ -172,6 +169,33 @@ app.post("/createuser", async (req, res) => {
         res.status(500).send({
             message : "Something went wrong, try again later"
         });
+    }
+});
+
+// login route
+app.post("/login", async (req, res) => {
+    try {
+        let client = await connectToMongo();
+        let db = client.db(dbName);
+        let users = db.collection("users");
+        
+        if (!(req.body.username && req.body.password)) {
+            client.close();
+            return res.status(400).send({message : "Not all info provided"});
+        }
+
+        let user = await users.findOne({username : req.body.username});
+
+        if (user && user.password && bcrypt.compareSync(req.body.password, user.password)) {
+            res.status(201).send({message : "You're good!"});
+        } else {
+            res.status(401).send({message : "Unauthorized"});
+        }
+
+        client.close();
+    } catch (error) {
+        console.error("Error connecting to database:", error);
+        res.status(500).send({message : "Server error"});
     }
 });
 
