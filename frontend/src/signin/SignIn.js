@@ -1,22 +1,16 @@
 import React, {useState} from 'react';
 import {Link} from 'react-router-dom';
-import "./SignUp.css";
+import "./SignIn.css";
 
 function SignUp() {
-    const [email, setEmail] = useState("");
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const [passwordCopy, setPasswordCopy] = useState("");
     const [resultMessage, setResultMessage] = useState("");
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        
-        if (password !== passwordCopy) {
-            return setResultMessage("Passwords must match!");
-        }
 
-        fetch("http://localhost:5000/createuser", {
+        fetch("http://localhost:5000/login", {
             method : "POST",
             headers : {
                 "Content-Type" : "application/json"  
@@ -24,7 +18,6 @@ function SignUp() {
             body : JSON.stringify({
                 username : username,
                 password : password,
-                email : email
             })
         })
         .then(response => {
@@ -48,25 +41,12 @@ function SignUp() {
     }
 
     return (
-        <div className="SignUp">
-            <h1>Create a free account</h1>
-            <h2>Start planning today, organize your student life</h2>
+        <div className="SignIn">
+            <h1>Sign In</h1>
             <p className="result-message">{resultMessage}</p>
-            <form className="signup-form" onSubmit={handleSubmit}>
+            <form className="signin-form" onSubmit={handleSubmit}>
                 <label>
-                    Enter your email
-                    <br/>
-                    <input 
-                        type="email"
-                        placeholder="Email"
-                        required
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                    />
-                </label>
-                <br/>
-                <label>
-                    Create username
+                    Username
                     <br/>
                     <input 
                         type="text"
@@ -78,7 +58,7 @@ function SignUp() {
                 </label>
                 <br />
                 <label>
-                    Create password
+                    Password
                     <br/>
                     <input 
                         type="password"
@@ -88,22 +68,9 @@ function SignUp() {
                         onChange={(e) => setPassword(e.target.value)}
                     />
                 </label>
-                <br/>
-                <label>
-                    Confirm password
-                    <br/>
-                    <input 
-                        type="password"
-                        placeholder="Confirm password"
-                        required
-                        value={passwordCopy}
-                        onChange={(e) => setPasswordCopy(e.target.value)}
-                    />
-                </label>
-                <br/>
-                <button type="submit">Continue</button>
+                <button type="submit">Sign In</button>
             </form>
-            <p className="signin-link">Have an account? <Link className="signin-link" to="/signin">Sign In</Link></p>
+            <p className="signup-link">Don't have an account? <Link className="signup-link" to="/signup">Sign Up</Link></p>
         </div>
     );
 }

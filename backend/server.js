@@ -154,10 +154,12 @@ app.post("/createuser", async (req, res) => {
 
             // Checks for duplicate key error
             if (error.code === 11000) {
-                // Extract field from error message
-                const field = error.message.split("index:")[1].split(" ")[0];
-                const msg = `${field.trim()} already in use`;
-                res.status(400).send({ message: msg });
+                if (error.errorResponse.keyPattern.username) {
+                    res.status(400).send({message : "Username already in use"});
+                }
+                else if (error.errorResponse.keyPattern.email) {
+                    res.status(400).send({message : "Email already in use"});
+                }
             } else {
                 res.status(500).send({ message: "Something went wrong, try again later" });
             }

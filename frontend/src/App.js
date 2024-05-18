@@ -4,6 +4,7 @@ import Layout from "./layout/Layout.js";
 import Test from "./test/Test.js";
 import Users from "./users/Users.js";
 import SignUp from "./signup/SignUp.js";
+import SignIn from "./signin/SignIn.js";
 
 import "./App.css";
 
@@ -16,6 +17,7 @@ function App() {
                         <Route index element={<Test />}/>
                         <Route path="users" element={<Users />}/>
                         <Route path="signup" element={<SignUp />}/>
+                        <Route path="signin" element={<SignIn />}/>
                     </Route>
                 </Routes>
             </BrowserRouter>
