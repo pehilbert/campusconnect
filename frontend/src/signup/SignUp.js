@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import "./SignUp.css";
 
 function SignUp() {
     const [email, setEmail] = useState("");
@@ -47,8 +48,10 @@ function SignUp() {
 
     return (
         <div className="SignUp">
-            <h1>Sign Up</h1>
-            <form onSubmit={handleSubmit}>
+            <h1>Create a free account</h1>
+            <h2>Start planning today, and make your student life run like clockwork</h2>
+            <p className="result-message">{resultMessage}</p>
+            <form className="signup-form" onSubmit={handleSubmit}>
                 <label>
                     Enter your email
                     <br/>
@@ -95,7 +98,7 @@ function SignUp() {
                 <br/>
                 <button type="submit">Continue</button>
             </form>
-            <p>{resultMessage}</p>
+            <p className="signin-link">Have an account? Sign In</p>
         </div>
     );
 }
