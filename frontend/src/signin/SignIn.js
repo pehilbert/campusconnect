@@ -33,6 +33,10 @@ function SignUp() {
             });
         })
         .then(data => {
+            if (data.token) {
+                console.log(data.token);
+            }
+            
             setResultMessage(data.message);
         })
         .catch(error => {

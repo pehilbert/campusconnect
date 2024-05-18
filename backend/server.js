@@ -2,6 +2,8 @@ const express = require("express");
 const { MongoClient, Double } = require("mongodb");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const SECRET_KEY = "earl";
 
 const app = express();
 const port = 5000;
@@ -189,14 +191,15 @@ app.post("/login", async (req, res) => {
         let user = await users.findOne({username : req.body.username});
 
         if (user && user.password && bcrypt.compareSync(req.body.password, user.password)) {
-            res.status(201).send({message : "You're good!"});
+            let token = jwt.sign({username : user.username}, SECRET_KEY, {expiresIn : "1h"});
+            res.status(200).send({message : "Login successful!", token});
         } else {
             res.status(401).send({message : "Unauthorized"});
         }
 
         client.close();
     } catch (error) {
-        console.error("Error connecting to database:", error);
+        console.error("Error fetching from database:", error);
         res.status(500).send({message : "Server error"});
     }
 });
