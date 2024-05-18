@@ -48,27 +48,131 @@ app.get("/test", (req, res) => {
 });
 
 // Fetch users
-app.get("/allusers", (req, res) => {
-    console.log("Request to fetch users");
+app.get("/users", async (req, res) => {
+    console.log("Request to get all users");
 
-    connectToMongo()
-        .then(client => {
-            let db = client.db(dbName);
-            let collection = db.collection("users");
+    try {
+        client = await connectToMongo();
+        const db = client.db(dbName);
+        const users = db.collection("users");
 
-            collection.find({}).toArray()
-                .then(result => {
-                    console.log("Users fetched:");
-                    console.log(result);
-                    res.json(result);
-                })
-                .catch(error => {
-                    console.error("Error fetching users", error);
-                })
-                .finally(() => {
-                    client.close();
-                });
+        try {
+            const result = await users.find({}).toArray();
+            res.status(201).send(result);
+        } catch (error) {
+            console.error("Error fetching user:", error);
+            res.status(500).send({
+                message : "Something went wrong fetching users"
+            });
+        }
+
+        client.close();
+    } catch (error) {
+        console.error("Error connecting to database:", error);
+        res.status(500).send({
+            message : "Could not connect to database"
         });
+    }
+});
+
+app.get("/users/:username", async (req, res) => {
+    console.log("Request to get user: " + req.params.username);
+
+    try {
+        client = await connectToMongo();
+        const db = client.db(dbName);
+        const users = db.collection("users");
+
+        try {
+            const result = await users.findOne({username : req.params.username});
+
+            if (!result) {
+                console.log("User not found");
+
+                res.status(404).send({
+                    message : "User not found"
+                })
+            } else {
+                console.log("User found:", result);
+                res.status(201).send(result);
+            }
+        } catch (error) {
+            console.error("Error fetching user:", error);
+            res.status(500).send({
+                message : "Something went wrong fetching user"
+            });
+        }
+
+        client.close();
+    } catch (error) {
+        console.error("Error connecting to database:", error);
+        res.status(500).send({
+            message : "Could not connect to database"
+        });
+    }
+});
+
+// Route to crate a new user
+app.post("/createuser", async (req, res) => {
+    console.log("Request to create user");
+    console.log("Request body: " + req.body);
+
+    if (!req.body.username || !req.body.password || !req.body.email) {
+        console.log("Not all information was provided");
+
+        return res.status(400).send({
+            error: "Must provide username, password, and email"
+        });
+    }
+    
+    try {
+        const client = await connectToMongo();
+        const db = client.db(dbName);
+        const users = db.collection("users");
+
+        try {
+            const result = await users.insertOne({
+                username: req.body.username,
+                password: req.body.password,
+                email: req.body.email
+            });
+
+            console.log(`Successfully added user with the _id: ${result.insertedId}`);
+            console.log("Result object:", result);
+
+            res.status(201).send({ 
+                message: "User created successfully", 
+                userId: result.insertedId 
+            });
+        } catch (error) {
+            console.error("Error creating user:", error);
+
+            let msg;
+
+            if (error.errorResponse) {
+                if (error.errorResponse.keyPattern.username) {
+                    msg = "Username already in use"
+                }
+
+                if (error.errorResponse.keyPattern.email) {
+                    msg = "Email already in use"
+                }
+            } else {
+                msg = "Something went wrong";
+            }
+
+            res.status(400).send({
+                message : msg
+            });
+        }
+
+        client.close();
+    } catch (error) {
+        console.error("Error connecting to database:", error);
+        res.status(500).send({
+            message : "Something went wrong, try again later"
+        });
+    }
 });
 
 // Start the server
