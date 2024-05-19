@@ -206,7 +206,9 @@ app.post("/updateuser", verifyToken, async (req, res) => {
         let db = client.db(dbName);
         let users = db.collection("users");
 
-        if (!req.body.token || !req.body.username || !req.body.newValues) {
+        console.log("Body received:", JSON.stringify(req.body));
+        
+        if (!req.body.username || !req.body.newValues) {
             return res.status(400).send({
                 message : "Not all values provided"
             });
@@ -249,7 +251,7 @@ app.post("/login", async (req, res) => {
 
         if (user && user.password && bcrypt.compareSync(req.body.password, user.password)) {
             let token = jwt.sign({username : user.username}, SECRET_KEY, {expiresIn : "1h"});
-            res.status(200).send({message : "Login successful!", token});
+            res.status(200).send({message : "Login successful!", token, username : user.username});
         } else {
             res.status(401).send({message : "Unauthorized"});
         }

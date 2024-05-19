@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
-import {Link} from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
+import {useAuth} from "../AuthContext";
 import "./SignUp.css";
 
 function SignUp() {
@@ -8,6 +9,8 @@ function SignUp() {
     const [password, setPassword] = useState("");
     const [passwordCopy, setPasswordCopy] = useState("");
     const [resultMessage, setResultMessage] = useState("");
+    const navigate = useNavigate();
+    const authContext = useAuth();
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -41,6 +44,45 @@ function SignUp() {
         })
         .then(data => {
             setResultMessage(data.message);
+            
+            fetch("http://localhost:5000/login", {
+                method : "POST",
+                headers : {
+                    "Content-Type" : "application/json"  
+                },
+                body : JSON.stringify({
+                    username : username,
+                    password : password,
+                })
+            })
+            .then(response => {
+                return response.json().then(data => {
+                    if (!response.ok) {
+                        let msg = data.message || "Unknown error";
+                        const error = new Error(msg);
+                        error.data = data;
+                        throw error;
+                    }
+    
+                    return data;
+                });
+            })
+            .then(data => {
+                if (data.token) {
+                    console.log(data.token);
+                }
+    
+                if (data.username) {
+                    console.log(data.username);
+                }
+                
+                authContext.login(data.token, data.username);
+                setResultMessage(data.message);
+                navigate("/edit-profile");
+            })
+            .catch(error => {
+                setResultMessage(error.message);
+            });
         })
         .catch(error => {
             setResultMessage(error.message);

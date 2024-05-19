@@ -3,7 +3,7 @@ import {Link, useNavigate} from 'react-router-dom';
 import {useAuth} from "../AuthContext";
 import "./SignIn.css";
 
-function SignUp() {
+function SignIn() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [resultMessage, setResultMessage] = useState("");
@@ -38,6 +38,10 @@ function SignUp() {
         .then(data => {
             if (data.token) {
                 console.log(data.token);
+            }
+
+            if (data.username) {
+                console.log(data.username);
             }
             
             authContext.login(data.token, data.username);
@@ -86,4 +90,4 @@ function SignUp() {
     );
 }
 
-export default SignUp;
+export default SignIn;
