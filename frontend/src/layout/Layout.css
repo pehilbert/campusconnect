@@ -33,11 +33,13 @@
 }
 
 .nav-link {
+    font-family: 'TitilliumWeb', Arial, sans-serif;
     font-size: 25px;
     padding: 10px;
     text-decoration: none;
     color: black;
     transition: background-color 0.3s ease;
+    border: none;
     border-radius: 10px;
     margin: 5px;
 }

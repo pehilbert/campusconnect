@@ -39,7 +39,7 @@ input {
     height: 30px;
 }
 
-button {
+.signup-button {
     font-family: 'TitilliumWeb', Arial, sans-serif;
     font-size: 22px;
 

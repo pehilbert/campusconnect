@@ -101,7 +101,7 @@ function SignUp() {
                     />
                 </label>
                 <br/>
-                <button type="submit">Continue</button>
+                <button className="signup-button" type="submit">Continue</button>
             </form>
             <p className="signin-link">Have an account? <Link className="signin-link" to="/signin">Sign In</Link></p>
         </div>

@@ -1,11 +1,14 @@
 import React, {useState} from 'react';
-import {Link} from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
+import {useAuth} from "../AuthContext";
 import "./SignIn.css";
 
 function SignUp() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [resultMessage, setResultMessage] = useState("");
+    const authContext = useAuth();
+    const navigate = useNavigate();
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -37,7 +40,9 @@ function SignUp() {
                 console.log(data.token);
             }
             
+            authContext.login(data.token, data.username);
             setResultMessage(data.message);
+            navigate("/");
         })
         .catch(error => {
             setResultMessage(error.message);
@@ -72,7 +77,7 @@ function SignUp() {
                         onChange={(e) => setPassword(e.target.value)}
                     />
                 </label>
-                <button type="submit">Sign In</button>
+                <button className="signin-button" type="submit">Sign In</button>
             </form>
             <p className="signup-link">Don't have an account? <Link className="signup-link" to="/signup">Sign Up</Link></p>
         </div>
