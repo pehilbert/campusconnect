@@ -4,7 +4,8 @@ import {useAuth} from "../AuthContext";
 import "./EditProfile.css"
 
 function EditProfile() {
-    let [values, setValues] = useState({});
+    const [values, setValues] = useState({});
+    const [resultMessage, setResultMessage] = useState("");
     const authContext = useAuth();
     const navigate = useNavigate();
 
@@ -35,19 +36,20 @@ function EditProfile() {
             })
         })
         .then(data => {
-            console.log(data.message);
+            setResultMessage(data.message);
             navigate("/edit-profile");
         })
         .catch(error => {
-            console.error("An error occurred when submitting:", error);
+            setResultMessage("An error occurred when submitting:", error);
         })
     }
 
     useEffect(() => {
+        console.log("useEffect running");
         console.log(JSON.stringify(authContext));
 
         if (!authContext.authToken || !authContext.username) {
-            navigate("/");
+            navigate("/signin");
         } else {
             const url = "http://localhost:5000/users/" + authContext.username;
 
@@ -71,12 +73,20 @@ function EditProfile() {
                     console.error("An error occured:", error);
                 });
         }
-    }, [authContext.authToken, authContext.username]);
+    }, [authContext.authToken, authContext.username, navigate]);
+    
+    const handleChange = (key, value) => {
+        setValues(prevValues => ({
+            ...prevValues,
+            [key]: value
+        }));
+    };
 
     return (
         <div className="EditProfile">
             <form className="edit-profile-form" onSubmit={handleSubmit}>
                 <h1 className="title">Your profile</h1>
+                <p className="profile-result-message">{resultMessage}</p>
                 <label className="profile-label">
                     First Name
                     <br/>
@@ -85,11 +95,8 @@ function EditProfile() {
                         type="text"
                         placeholder="First Name"
                         required
-                        value={values.firstName}
-                        onChange={(e) => {
-                            values.firstName = e.target.value;
-                            console.log(values);
-                        }}
+                        value={values.firstName || ""}
+                        onChange={(e) => handleChange("firstName", e.target.value)}
                     />
                 </label>
                 <br/>
@@ -101,11 +108,8 @@ function EditProfile() {
                         type="text"
                         placeholder="Last Name"
                         required
-                        value={values.lastName}
-                        onChange={(e) => {
-                            values.lastName = e.target.value;
-                            console.log(values);
-                        }}
+                        value={values.lastName || ""}
+                        onChange={(e) => handleChange("lastName", e.target.value)}
                     />
                 </label>
                 <br/>
@@ -118,11 +122,8 @@ function EditProfile() {
                         placeholder="123-456-7890"
                         pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
                         required
-                        value={values.phoneNumber}
-                        onChange={(e) => {
-                            values.phoneNumber = e.target.value;
-                            console.log(values);
-                        }}
+                        value={values.phoneNumber || ""}
+                        onChange={(e) => handleChange("phoneNumber", e.target.value)}
                     />
                 </label>
                 <br/>
@@ -134,11 +135,8 @@ function EditProfile() {
                         type="date"
                         placeholder="Birthday"
                         required
-                        value={values.birthday}
-                        onChange={(e) => {
-                            values.birthday = e.target.value;
-                            console.log(values);
-                        }}
+                        value={values.birthday || ""}
+                        onChange={(e) => handleChange("birthday", e.target.value)}
                     />
                 </label>
                 <button className="save-button" type="submit">Save</button>
