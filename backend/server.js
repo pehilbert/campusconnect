@@ -42,7 +42,9 @@ function verifyToken(req, res, next) {
 
     jwt.verify(token, SECRET_KEY, (err, decoded) => {
         if (err) {
-            return res.status(403).send({message : "Invalid or expired token"});
+            return res.status(403).send({
+                message : "Invalid or expired token"
+            });
         }
 
         req.user = decoded;
