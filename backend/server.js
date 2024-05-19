@@ -31,6 +31,25 @@ async function connectToMongo() {
     }
 }
 
+// Token verification middleware
+function verifyToken(req, res, next) {
+    const authHeader = req.headers["authorization"];
+    const token = authHeader && authHeader.split(" ")[1];
+
+    if (!token) {
+        return res.status(401).send({message : "Access token required"});
+    }
+
+    jwt.verify(token, SECRET_KEY, (err, decoded) => {
+        if (err) {
+            return res.status(403).send({message : "Invalid or expired token"});
+        }
+
+        req.user = decoded;
+        next();
+    });
+}
+
 // Test database connection
 console.log("Testing database connection...");
 
@@ -117,7 +136,7 @@ app.get("/users/:username", async (req, res) => {
     }
 });
 
-// Route to crate a new user
+// Creates a new user with username, password, and email
 app.post("/createuser", async (req, res) => {
     console.log("Request to create user");
     console.log("Request body: " + JSON.stringify(req.body));
@@ -168,6 +187,42 @@ app.post("/createuser", async (req, res) => {
         }
 
         client.close();
+    } catch (error) {
+        console.error("Error connecting to database:", error);
+        res.status(500).send({
+            message : "Something went wrong, try again later"
+        });
+    }
+});
+
+// updates an existing user
+// request body should have an access token, username of the user to update, and
+// an object representing the new values
+app.post("/updateuser", verifyToken, async (req, res) => {
+    try {
+        let client = await connectToMongo();
+        let db = client.db(dbName);
+        let users = db.collection("users");
+
+        if (!req.body.token || !req.body.username || !req.body.newValues) {
+            return res.status(400).send({
+                message : "Not all values provided"
+            });
+        }
+
+        // Make sure that users can only update their own profiles
+        if (req.body.username !== req.user.username) {
+            return res.status(403).send({
+                message : "Unauthorized"
+            });
+        }
+
+        let result = await users.updateOne({username : req.body.username}, {$set : req.body.newValues});
+        console.log("Sucessfully updated user, result object:", result);
+
+        res.status(201).send({ 
+            message: "User profile updated successfully", 
+        });
     } catch (error) {
         console.error("Error connecting to database:", error);
         res.status(500).send({
