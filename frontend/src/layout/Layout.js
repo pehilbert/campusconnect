@@ -19,7 +19,8 @@ function Layout() {
                     <img className="logo" alt="logo" src="./clockwork_text.svg"></img>
                     <div className="links">
                         <Link className="nav-link" to="/">Home</Link>
-                        <Link className="nav-link" to="/users">Users</Link>
+                        <Link className="nav-link" to="/edit-profile">My Profile</Link>
+                        {/* Conditionally render either Sign In or Sign Out button */}
                         {authToken ? (
                             <button className="nav-link emphasized" onClick={() => {
                                 authContext.logout();

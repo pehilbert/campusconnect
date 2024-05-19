@@ -26,11 +26,11 @@ h1, h2 {
     margin-top: 25px;
 }
 
-label {
+.signup-label {
     font-size: 20px;
 }
 
-input {
+.signup-input {
     font-family: 'TitilliumWeb', Arial, sans-serif;
     font-size: 18px;
     padding: 10px;

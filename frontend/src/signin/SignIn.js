@@ -54,10 +54,11 @@ function SignUp() {
             <h1>Sign In</h1>
             <p className="result-message">{resultMessage}</p>
             <form className="signin-form" onSubmit={handleSubmit}>
-                <label>
+                <label className="signin-label">
                     Username
                     <br/>
-                    <input 
+                    <input
+                        className="signin-input" 
                         type="text"
                         placeholder="Username"
                         required
@@ -66,10 +67,11 @@ function SignUp() {
                     />
                 </label>
                 <br />
-                <label>
+                <label className="signin-label">
                     Password
                     <br/>
                     <input 
+                        className="signin-input" 
                         type="password"
                         placeholder="Password"
                         required

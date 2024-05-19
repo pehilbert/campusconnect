@@ -53,10 +53,11 @@ function SignUp() {
             <h2>Start planning today, organize your student life</h2>
             <p className="result-message">{resultMessage}</p>
             <form className="signup-form" onSubmit={handleSubmit}>
-                <label>
+                <label className="signup-label">
                     Enter your email
                     <br/>
                     <input 
+                        className="signup-input"
                         type="email"
                         placeholder="Email"
                         required
@@ -65,10 +66,11 @@ function SignUp() {
                     />
                 </label>
                 <br/>
-                <label>
+                <label className="signup-label">
                     Create username
                     <br/>
                     <input 
+                        className="signup-input"
                         type="text"
                         placeholder="Username"
                         required
@@ -77,10 +79,11 @@ function SignUp() {
                     />
                 </label>
                 <br />
-                <label>
+                <label className="signup-label">
                     Create password
                     <br/>
                     <input 
+                        className="signup-input"
                         type="password"
                         placeholder="Password"
                         required
@@ -89,10 +92,11 @@ function SignUp() {
                     />
                 </label>
                 <br/>
-                <label>
+                <label className="signup-label">
                     Confirm password
                     <br/>
                     <input 
+                        className="signup-input"
                         type="password"
                         placeholder="Confirm password"
                         required
