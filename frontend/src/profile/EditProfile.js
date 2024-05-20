@@ -12,7 +12,7 @@ function EditProfile() {
     const handleSubmit = (event) => {
         event.preventDefault();
         
-        fetch("http://localhost:5000/updateuser", {
+        fetch("http://localhost:5000/updateuser/" + authContext.id, {
             method : "POST",
             headers : {
                 "authorization" : "Bearer " + authContext.authToken,
@@ -40,7 +40,7 @@ function EditProfile() {
             navigate("/edit-profile");
         })
         .catch(error => {
-            setResultMessage("An error occurred when submitting:", error);
+            setResultMessage(error.message);
         })
     }
 
@@ -48,10 +48,10 @@ function EditProfile() {
         console.log("useEffect running");
         console.log(JSON.stringify(authContext));
 
-        if (!authContext.authToken || !authContext.username) {
+        if (!authContext.authToken || !authContext.id) {
             navigate("/signin");
         } else {
-            const url = "http://localhost:5000/users/" + authContext.username;
+            const url = "http://localhost:5000/users/" + authContext.id;
 
             fetch(url)
                 .then(response => {

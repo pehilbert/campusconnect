@@ -40,11 +40,11 @@ function SignIn() {
                 console.log(data.token);
             }
 
-            if (data.username) {
-                console.log(data.username);
+            if (data.id) {
+                console.log(data.id);
             }
             
-            authContext.login(data.token, data.username);
+            authContext.login(data.token, data.id);
             setResultMessage(data.message);
             navigate("/");
         })

@@ -9,21 +9,21 @@ const AuthContext = createContext({
 
 export const AuthProvider = ({children}) => {
     const [authToken, setAuthToken] = useState(null);
-    const [username, setUser] = useState(null);
+    const [id, setId] = useState(null);
 
-    const login = (token, username) => {
+    const login = (token, id) => {
         setAuthToken(token);
-        setUser(username);
+        setId(id);
     }
 
     const logout = () => {
         setAuthToken(null);
-        setUser(null);
+        setId(null);
     }
 
     const value = {
         authToken,
-        username,
+        id,
         login,
         logout
     }

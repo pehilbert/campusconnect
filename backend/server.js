@@ -1,5 +1,5 @@
 const express = require("express");
-const { MongoClient, Double } = require("mongodb");
+const { MongoClient, ObjectId } = require("mongodb");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -101,8 +101,8 @@ app.get("/users", async (req, res) => {
     }
 });
 
-app.get("/users/:username", async (req, res) => {
-    console.log("Request to get user: " + req.params.username);
+app.get("/users/:id", async (req, res) => {
+    console.log("Request to get user: " + req.params.id);
 
     try {
         client = await connectToMongo();
@@ -110,7 +110,7 @@ app.get("/users/:username", async (req, res) => {
         const users = db.collection("users");
 
         try {
-            const result = await users.findOne({username : req.params.username});
+            const result = await users.findOne({_id : new ObjectId(req.params.id)});
 
             if (!result) {
                 console.log("User not found");
@@ -200,28 +200,28 @@ app.post("/createuser", async (req, res) => {
 // updates an existing user
 // request body should have an access token, username of the user to update, and
 // an object representing the new values
-app.post("/updateuser", verifyToken, async (req, res) => {
+app.post("/updateuser/:id", verifyToken, async (req, res) => {
     try {
         let client = await connectToMongo();
         let db = client.db(dbName);
         let users = db.collection("users");
 
         console.log("Body received:", JSON.stringify(req.body));
-        
-        if (!req.body.username || !req.body.newValues) {
+        console.log("Params:", JSON.stringify(req.params));
+        if (!req.params.id || !req.body.newValues) {
             return res.status(400).send({
-                message : "Not all values provided"
+                message : "Must provide values to update"
             });
         }
 
         // Make sure that users can only update their own profiles
-        if (req.body.username !== req.user.username) {
+        if (req.params.id !== req.user.id) {
             return res.status(403).send({
                 message : "Unauthorized"
             });
         }
 
-        let result = await users.updateOne({username : req.body.username}, {$set : req.body.newValues});
+        let result = await users.updateOne({_id : new ObjectId(req.params.id)}, {$set : req.body.newValues});
         console.log("Sucessfully updated user, result object:", result);
 
         res.status(201).send({ 
@@ -250,8 +250,8 @@ app.post("/login", async (req, res) => {
         let user = await users.findOne({username : req.body.username});
 
         if (user && user.password && bcrypt.compareSync(req.body.password, user.password)) {
-            let token = jwt.sign({username : user.username}, SECRET_KEY, {expiresIn : "1h"});
-            res.status(200).send({message : "Login successful!", token, username : user.username});
+            let token = jwt.sign({id : user._id}, SECRET_KEY, {expiresIn : "1h"});
+            res.status(200).send({message : "Login successful!", token, id : user._id});
         } else {
             res.status(401).send({message : "Unauthorized"});
         }
