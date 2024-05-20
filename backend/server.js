@@ -73,7 +73,11 @@ app.get("/test", (req, res) => {
     res.send("Welcome to Clockwork!");
 });
 
-// Fetch users
+/*
+Users CRUD operations
+*/
+
+// Routes to fetch all users or specific user
 app.get("/users", async (req, res) => {
     console.log("Request to get all users");
 
@@ -197,10 +201,8 @@ app.post("/createuser", async (req, res) => {
     }
 });
 
-// updates an existing user
-// request body should have an access token, username of the user to update, and
-// an object representing the new values
-app.post("/updateuser/:id", verifyToken, async (req, res) => {
+// Updates a user with the id given by the token associated with the request
+app.post("/updateuser", verifyToken, async (req, res) => {
     try {
         let client = await connectToMongo();
         let db = client.db(dbName);
@@ -208,20 +210,13 @@ app.post("/updateuser/:id", verifyToken, async (req, res) => {
 
         console.log("Body received:", JSON.stringify(req.body));
         console.log("Params:", JSON.stringify(req.params));
-        if (!req.params.id || !req.body.newValues) {
+        if (!req.body.newValues) {
             return res.status(400).send({
                 message : "Must provide values to update"
             });
         }
 
-        // Make sure that users can only update their own profiles
-        if (req.params.id !== req.user.id) {
-            return res.status(403).send({
-                message : "Unauthorized"
-            });
-        }
-
-        let result = await users.updateOne({_id : new ObjectId(req.params.id)}, {$set : req.body.newValues});
+        let result = await users.updateOne({_id : new ObjectId(req.user.id)}, {$set : req.body.newValues});
         console.log("Sucessfully updated user, result object:", result);
 
         res.status(201).send({ 
@@ -235,7 +230,9 @@ app.post("/updateuser/:id", verifyToken, async (req, res) => {
     }
 });
 
-// login route
+/*
+Authentication routes
+*/
 app.post("/login", async (req, res) => {
     try {
         let client = await connectToMongo();

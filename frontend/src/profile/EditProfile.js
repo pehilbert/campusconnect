@@ -12,7 +12,7 @@ function EditProfile() {
     const handleSubmit = (event) => {
         event.preventDefault();
         
-        fetch("http://localhost:5000/updateuser/" + authContext.id, {
+        fetch("http://localhost:5000/updateuser", {
             method : "POST",
             headers : {
                 "authorization" : "Bearer " + authContext.authToken,
