@@ -65,6 +65,7 @@ function EditProfile() {
                     setValues({
                         firstName : data.firstName,
                         lastName : data.lastName,
+                        school : data.school,
                         phoneNumber : data.phoneNumber,
                         birthday : data.birthday
                     })
@@ -73,7 +74,7 @@ function EditProfile() {
                     console.error("An error occured:", error);
                 });
         }
-    }, [authContext.authToken, authContext.username, navigate]);
+    }, [authContext, authContext.authToken, authContext.username, navigate]);
     
     const handleChange = (key, value) => {
         setValues(prevValues => ({
@@ -110,6 +111,19 @@ function EditProfile() {
                         required
                         value={values.lastName || ""}
                         onChange={(e) => handleChange("lastName", e.target.value)}
+                    />
+                </label>
+                <br/>
+                <label className="profile-label">
+                    School
+                    <br/>
+                    <input
+                        className="profile-input"
+                        type="text"
+                        placeholder="School"
+                        required
+                        value={values.school || ""}
+                        onChange={(e) => handleChange("school", e.target.value)}
                     />
                 </label>
                 <br/>
