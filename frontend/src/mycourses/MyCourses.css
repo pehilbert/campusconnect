@@ -1,0 +1,108 @@
+@font-face {
+    font-family: 'TitilliumWeb';
+    src: url('/public/fonts/TitilliumWeb-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.add-remove {
+    font-family: 'TitilliumWeb', Arial, sans-serif;
+    background-color: #79E7FF;
+    margin-left: 10px;
+    width: 50px;
+    height: 50px;
+    border: none;
+    border-radius: 20px;
+    font-size: 30px;
+    text-align: center;
+}
+
+.course-container {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.course {
+    font-family: 'TitilliumWeb', Arial, sans-serif;
+    background-color: #FEFFBA;
+    border-radius: 10px;
+    margin: 10px;
+    padding: 10px;
+    width: 420px;
+    height: fit-content;
+}
+
+.section-title {
+    margin-top: 10px;
+    margin-left: 10px;
+    text-align: left;
+    font-family: 'TitilliumWeb', Arial, sans-serif;
+    color: white;
+}
+
+.todo-title {
+    margin-top: 50px;
+}
+
+.course-heading {
+    font-size: 21px;
+}
+
+.course-normal {
+    font-size: 16px;
+}
+
+.edit-button, .back-button {
+    float: right;
+    font-family: 'TitilliumWeb', Arial, sans-serif;
+    font-size: 16px;
+    width: 50px;
+    height: auto;
+    background-color: white;
+    border: none;
+    border-radius: 5px;
+}
+
+.course-input {
+    font-family: 'TitilliumWeb', Arial, sans-serif;
+    padding: 2px;
+    border-radius: 5px;
+    margin: 2px;
+}
+
+.course-input-label {
+    margin: 2px;
+}
+
+.course-remove-button, .course-add-button {
+    border: none;
+    color: white;
+    font-size: 16px;
+    width: 20px;
+    height: 20px;
+    margin: 8px;
+    border-radius: 20px;
+}
+
+.course-add-button {
+    background-color: green;
+}
+
+.course-remove-button {
+    background-color: red;
+}
+
+.course-save-button {
+    font-family: 'TitilliumWeb', Arial, sans-serif;
+    font-size: 18px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10px;
+    width: 100px;
+    height: 30px;
+    background-color: #79E7FF;
+    border-radius: 10px;
+    border: none;
+}
