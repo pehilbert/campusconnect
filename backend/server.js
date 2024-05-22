@@ -282,7 +282,7 @@ app.get("/courses/:id", async (req, res) => {
         const result = await courses.findOne({_id : new ObjectId(req.params.id)});
 
         if (result) {
-            res.status(200).send(result);
+            res.status(200).send(JSON.stringify(result));
         } else {
             res.status(404).send({
                 message : "Course not found"
@@ -310,6 +310,8 @@ app.get("/mycourses", verifyToken, async (req, res) => {
         let courses = db.collection("courses");
 
         let result = await courses.find({user_id : new ObjectId(req.user.id)}).toArray();
+        console.log("Courses fetched for user:", result);
+
         res.status(200).send(result);
     } catch (error) {
         console.error("Error with database:", error);
@@ -326,6 +328,8 @@ app.get("/mycourses", verifyToken, async (req, res) => {
 // Creates a course for the requesting user
 app.post("/addcourse", verifyToken, async (req, res) => {
     let client;
+    
+    console.log("Body received:", req.body);
 
     try {
         let client = await connectToMongo();
@@ -337,9 +341,7 @@ app.post("/addcourse", verifyToken, async (req, res) => {
             courseCode : req.body.courseCode,
             courseName : req.body.courseName,
             instructors : req.body.instructors,
-            meetings : req.body.meetings,
-            startDate : req.body.startDate,
-            endDate : req.body.endDate
+            meetings : req.body.meetings
         });
 
         if (result.insertedId) {
@@ -379,7 +381,7 @@ app.post("/editcourse/:id", verifyToken, async (req, res) => {
             });
         }
 
-        let result = await courses.updateOne({_id : req.params.id}, {$set : req.body.newValues});
+        let result = await courses.updateOne({_id : new ObjectId(req.params.id)}, {$set : req.body.newValues});
         console.log("Sucessfully updated course, result object:", result);
 
         if (result.modifiedCount === 1) {

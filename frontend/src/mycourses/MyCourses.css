@@ -53,7 +53,7 @@
     font-size: 16px;
 }
 
-.edit-button, .back-button {
+.edit-button, .back-button, .drop-button {
     float: right;
     font-family: 'TitilliumWeb', Arial, sans-serif;
     font-size: 16px;
@@ -62,6 +62,11 @@
     background-color: white;
     border: none;
     border-radius: 5px;
+}
+
+.drop-button {
+    background-color: red;
+    color: white;
 }
 
 .course-input {

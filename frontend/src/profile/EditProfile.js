@@ -1,6 +1,7 @@
 import {useNavigate} from "react-router-dom";
 import {useState, useEffect} from "react";
 import {useAuth} from "../AuthContext";
+import SignIn from "../signin/SignIn";
 import "./EditProfile.css"
 
 function EditProfile() {
@@ -82,6 +83,12 @@ function EditProfile() {
             [key]: value
         }));
     };
+
+    if (!authContext.authToken) {
+        return (
+            <SignIn />
+        );
+    }
 
     return (
         <div className="EditProfile">

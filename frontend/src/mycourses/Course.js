@@ -1,9 +1,11 @@
 import {useState} from "react";
+import {useAuth} from "../AuthContext";
 
 function Course(props) {
+    const authContext = useAuth();
     const [editMode, setEditMode] = useState(props.editMode || false);
     const [displayObject, setDisplayObject] = useState(props.displayObject || {});
-    const [values, setValues] = useState({});
+    const [values, setValues] = useState(props.displayObject || {});
     const [newInstructor, setNewInstructor] = useState("");
     const [newMeeting, setNewMeeting] = useState({
         day : "",
@@ -16,11 +18,103 @@ function Course(props) {
         console.log("Saved");
         setDisplayObject(values);
         setEditMode(false);
+
+        console.log("Display object:", displayObject);
+
+        if (displayObject._id) {
+            fetch("http://localhost:5000/editcourse/" + displayObject._id, {
+                method : "POST",
+                headers : {
+                    "Authorization" : "Bearer " + authContext.authToken,
+                    "Content-Type" : "application/json"
+                },
+                // manually put values here so we don't include the id
+                body : JSON.stringify({
+                    newValues : {
+                        courseCode : values.courseCode,
+                        courseName : values.courseName,
+                        instructors : values.instructors,
+                        meetings : values.meetings
+                    }
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(response.message);
+                }
+
+                return response.json();
+            })
+            .then(data => console.log(data.message))
+            .catch(error => {
+                console.error("An error occurred editing a course:", error);
+            })
+        } else {
+            fetch("http://localhost:5000/addcourse", {
+                method : "POST",
+                headers : {
+                    "Authorization" : "Bearer " + authContext.authToken,
+                    "Content-Type" : "application/json"
+                },
+                body : JSON.stringify(values)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(response);
+                }
+
+                return response.json();
+            })
+            .then(data => console.log("Course added:", data.courseId))
+            .catch(error => {
+                console.error("An error occurred adding a course:", error);
+            });
+        }
+        // If this is an "add course" component, set the state to no longer adding a course
+        if (props.stateFunction) {
+            props.stateFunction(false);
+        }
     }
 
     const handleBack = () => {
-        setValues(displayObject);
-        setEditMode(!editMode);
+        if (displayObject) {
+            setValues(displayObject);
+            setEditMode(!editMode);
+        }
+
+        // If this is an "add course" component, set the state to no longer adding a course
+        if (props.stateFunction) {
+            props.stateFunction(false);
+        }
+    }
+
+    const handleDrop = () => {
+        setDisplayObject({});
+        setEditMode(false);
+
+        fetch("http://localhost:5000/dropcourse/" + displayObject._id, {
+            method : "POST",
+            headers : {
+                "Authorization" : "Bearer " + authContext.authToken,
+                "Content-Type" : "application/json"
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(response.message);
+            }
+
+            return response.json();
+        })
+        .then(data => console.log(data.message))
+        .catch(error => {
+            console.error("An error occurred dropping a course:", error);
+        })
+
+        // If this is an "add course" component, set the state to no longer adding a course
+        if (props.stateFunction) {
+            props.stateFunction(false);
+        }
     }
 
     const handleChange = (key, value) => {
@@ -142,9 +236,9 @@ function Course(props) {
                         <input
                             className="course-input"
                             type="text"
-                            value={values.courseTitle || ""}
+                            value={values.courseName || ""}
                             placeholder="Course Title"
-                            onChange={(e) => handleChange("courseTitle", e.target.value)}
+                            onChange={(e) => handleChange("courseName", e.target.value)}
                             required
                         />
                         <p className="course-normal">Instructor(s):</p>
@@ -210,6 +304,7 @@ function Course(props) {
                         </div>
                         <button type="submit" className="course-save-button">Save</button>
                     </form>
+                    <button className="drop-button" onClick={handleDrop}>Drop</button>
                 </>
             ) : (
                 // Non edit mode render
@@ -221,7 +316,7 @@ function Course(props) {
                         Edit
                     </button>
                     <p className="course-heading">{displayObject.courseCode || ""}</p>
-                    <p className="course-normal">{displayObject.courseTitle || ""}</p>
+                    <p className="course-normal">{displayObject.courseName || ""}</p>
                     <p className="course-normal">{displayObject.instructors?.join(", ")}</p>
                     {displayObject.meetings?.map((meeting, index) => (
                         <p key={index} className="course-normal">
