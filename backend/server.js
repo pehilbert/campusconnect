@@ -88,7 +88,7 @@ app.get("/users", async (req, res) => {
 
         try {
             const result = await users.find({}).toArray();
-            res.status(201).send(result);
+            res.status(200).send(result);
         } catch (error) {
             console.error("Error fetching user:", error);
             res.status(500).send({
@@ -208,9 +208,8 @@ app.post("/updateuser", verifyToken, async (req, res) => {
         let db = client.db(dbName);
         let users = db.collection("users");
 
-        console.log("Body received:", JSON.stringify(req.body));
-        console.log("Params:", JSON.stringify(req.params));
         if (!req.body.newValues) {
+            client.close();
             return res.status(400).send({
                 message : "Must provide values to update"
             });
@@ -219,14 +218,221 @@ app.post("/updateuser", verifyToken, async (req, res) => {
         let result = await users.updateOne({_id : new ObjectId(req.user.id)}, {$set : req.body.newValues});
         console.log("Sucessfully updated user, result object:", result);
 
-        res.status(201).send({ 
-            message: "User profile updated successfully", 
-        });
+        if (result.modifiedCount === 1) {
+            res.status(201).send({ 
+                message: "User profile updated successfully", 
+            });
+        } else {
+            res.status(404).send({
+                message : "User not found"
+            })
+        }
+
+        client.close();
     } catch (error) {
         console.error("Error connecting to database:", error);
         res.status(500).send({
             message : "Something went wrong, try again later"
         });
+    }
+});
+
+// Deletes a user's account, can only be done with authentication
+app.post("/deleteuser", verifyToken, async (req, res) => {
+    try {
+        let client = await connectToMongo();
+        let db = client.db(dbName);
+        let users = db.collection("users");
+
+        let result = await users.deleteOne({_id : new ObjectId(req.user.id)});
+        console.log("Sucessfully deleted user, result object:", result);
+
+        if (result.deletedCount === 1) {
+            res.status(201).send({
+                message : "User deleted successfully"
+            })
+        } else {
+            res.status(404).send({
+                message : "User not found"
+            })
+        }
+
+        client.close();
+    } catch (error) {
+        console.error("Error with database:", error);
+        res.status(500).send({
+            message : "Something went wrong, try again later"
+        });
+    }
+});
+
+/*
+    Courses CRUD operations
+*/
+
+// Gets a specific course by its id
+app.get("/courses/:id", async (req, res) => {
+    let client;
+
+    try {
+        client = await connectToMongo();
+        let db = client.db(dbName);
+        let courses = db.collection("courses");
+
+        const result = await courses.findOne({_id : new ObjectId(req.params.id)});
+
+        if (result) {
+            res.status(200).send(result);
+        } else {
+            res.status(404).send({
+                message : "Course not found"
+            });
+        }
+    } catch (error) {
+        console.error("Error with database:", error);
+        res.status(500).send({
+            message : "Something went wrong, try again later"
+        });
+    } finally {
+        if (client) {
+            client.close();
+        }
+    }
+});
+
+// Gets all the courses for the requesting user, requires authentication
+app.get("/mycourses", verifyToken, async (req, res) => {
+    let client;
+
+    try {
+        let client = await connectToMongo();
+        let db = client.db(dbName);
+        let courses = db.collection("courses");
+
+        let result = await courses.find({user_id : new ObjectId(req.user.id)}).toArray();
+        res.status(200).send(result);
+    } catch (error) {
+        console.error("Error with database:", error);
+        res.status(500).send({
+            message : "Something went wrong, try again later"
+        });
+    } finally {
+        if (client) {
+            client.close();
+        }
+    }
+});
+
+// Creates a course for the requesting user
+app.post("/addcourse", verifyToken, async (req, res) => {
+    let client;
+
+    try {
+        let client = await connectToMongo();
+        let db = client.db(dbName);
+        let courses = db.collection("courses");
+
+        let result = await courses.insertOne({
+            user_id : new ObjectId(req.user.id),
+            courseCode : req.body.courseCode,
+            courseName : req.body.courseName,
+            instructors : req.body.instructors,
+            meetings : req.body.meetings,
+            startDate : req.body.startDate,
+            endDate : req.body.endDate
+        });
+
+        if (result.insertedId) {
+            res.status(201).send({
+                courseId : result.insertedId
+            });
+        } else {
+            res.status(500).send({
+                message : "Failed to add course"
+            });
+        }
+    } catch (error) {
+        console.error("Error with database:", error);
+        res.status(500).send({
+            message : "Something went wrong, try again later"
+        });
+    } finally {
+        if (client) {
+            client.close();
+        }
+    }
+});
+
+// Updates an existing course
+app.post("/editcourse/:id", verifyToken, async (req, res) => {
+    let client;
+
+    try {
+        let client = await connectToMongo();
+        let db = client.db(dbName);
+        let courses = db.collection("courses");
+
+        if (!req.body.newValues) {
+            client.close();
+            return res.status(400).send({
+                message : "Must provide values to update"
+            });
+        }
+
+        let result = await courses.updateOne({_id : req.params.id}, {$set : req.body.newValues});
+        console.log("Sucessfully updated course, result object:", result);
+
+        if (result.modifiedCount === 1) {
+            res.status(201).send({ 
+                message: "Course edited successfully", 
+            });
+        } else {
+            res.status(404).send({
+                message : "Course not found"
+            })
+        }
+    } catch (error) {
+        console.error("Error with database:", error);
+        res.status(500).send({
+            message : "Something went wrong, try again later"
+        });
+    } finally {
+        if (client) {
+            client.close();
+        }
+    }
+});
+
+// Deletes a course
+app.post("/dropcourse/:id", verifyToken, async (req, res) => {
+    let client;
+
+    try {
+        client = await connectToMongo();
+        let db = client.db(dbName);
+        let courses = db.collection("courses");
+
+        let result = await courses.deleteOne({_id : new ObjectId(req.params.id)});
+        console.log("Sucessfully deleted course, result object:", result);
+
+        if (result.deletedCount === 1) {
+            res.status(201).send({
+                message : "Course dropped successfully"
+            })
+        } else {
+            res.status(404).send({
+                message : "User not found"
+            })
+        }
+    } catch (error) {
+        console.error("Error with database:", error);
+        res.status(500).send({
+            message : "Something went wrong, try again later"
+        });
+    } finally {
+        if (client) {
+            client.close();
+        }
     }
 });
 
