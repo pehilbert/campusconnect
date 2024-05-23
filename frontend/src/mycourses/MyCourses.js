@@ -9,6 +9,11 @@ function MyCourses() {
     const authContext = useAuth();
     const [courses, setCourses] = useState([]);
     const [addingCourse, setAddingCourse] = useState(false);
+    const [refreshNum, changeRefreshNum] = useState(0);
+
+    const refresh = () => {
+        changeRefreshNum(refreshNum + 1);
+    }
 
     useEffect(() => {
         if (authContext.authToken) {
@@ -32,7 +37,7 @@ function MyCourses() {
                 console.error("An error occurred fetching courses:", error);
             });
         }
-    }, [authContext, authContext.authToken, addingCourse]);
+    }, [authContext, authContext.authToken, addingCourse, refreshNum]);
 
     if (!authContext.authToken) {
         return (
@@ -48,10 +53,10 @@ function MyCourses() {
             </h1>
             <div className="course-container">
                 {courses.map((course, index) => (
-                    <Course key={index} displayObject={course} editMode={false} stateFunction={setAddingCourse}/>
+                    <Course key={index} displayObject={course} editMode={false} refreshFunction={refresh}/>
                 ))}
                 {addingCourse ? (
-                    <Course editMode={true} stateFunction={setAddingCourse} />
+                    <Course newCourse={true} editMode={true} stateFunction={setAddingCourse} />
                 ) : (
                     <></>
                 )}

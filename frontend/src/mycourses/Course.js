@@ -74,6 +74,10 @@ function Course(props) {
         if (props.stateFunction) {
             props.stateFunction(false);
         }
+
+        if (props.refreshFunction) {
+            props.refreshFunction();
+        }
     }
 
     const handleBack = () => {
@@ -86,10 +90,13 @@ function Course(props) {
         if (props.stateFunction) {
             props.stateFunction(false);
         }
+
+        if (props.refreshFunction) {
+            props.refreshFunction();
+        }
     }
 
     const handleDrop = () => {
-        setDisplayObject({});
         setEditMode(false);
 
         fetch("http://localhost:5000/dropcourse/" + displayObject._id, {
@@ -114,6 +121,10 @@ function Course(props) {
         // If this is an "add course" component, set the state to no longer adding a course
         if (props.stateFunction) {
             props.stateFunction(false);
+        }
+
+        if (props.refreshFunction) {
+            props.refreshFunction();
         }
     }
 
@@ -304,7 +315,7 @@ function Course(props) {
                         </div>
                         <button type="submit" className="course-save-button">Save</button>
                     </form>
-                    <button className="drop-button" onClick={handleDrop}>Drop</button>
+                    {props.newCourse ? (<></>) : (<button className="drop-button" onClick={handleDrop}>Drop</button>)}
                 </>
             ) : (
                 // Non edit mode render
@@ -316,16 +327,13 @@ function Course(props) {
                         Edit
                     </button>
                     <p className="course-heading">{displayObject.courseCode || ""}</p>
-                    <p className="course-normal">{displayObject.courseName || ""}</p>
+                    <p className="course-heading">{displayObject.courseName || ""}</p>
                     <p className="course-normal">{displayObject.instructors?.join(", ")}</p>
                     {displayObject.meetings?.map((meeting, index) => (
                         <p key={index} className="course-normal">
                             {meeting.day}, {covertTo12Hr(meeting.startTime)}-{covertTo12Hr(meeting.endTime)}
                         </p>
                     ))}
-                    <p className="course-heading">Upcoming:</p>
-                    <p className="course-normal">Assignment 1</p>
-                    <p className="course-normal">Assignment 2</p>
                 </>
             )}
         </div>
