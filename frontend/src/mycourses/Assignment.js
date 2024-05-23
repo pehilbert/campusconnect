@@ -2,7 +2,7 @@ function Assignment(props) {
     return (
         <div className="assignment">
             <div className="assignment-status">
-                <img className="assignment-status-image"/>
+                <img className="assignment-status-image" alt="Assignment Status" src="/assigned.png"/>
                 <select className="assignment-status-dropdown">
                     <option default value="Assigned">Assigned</option>
                     <option default value="In Progress">In Progress</option>
@@ -19,7 +19,7 @@ function Assignment(props) {
                 </div>
                 <div className="assignment-body">
                     <p className="assignment-normal">Deadline</p>
-                    <p className="assignment-normal">Description</p>
+                    <p className="assignment-normal">This is a very long description it should go more than one line oh yeah let's see how this looks</p>
                 </div>
             </div>
         </div>

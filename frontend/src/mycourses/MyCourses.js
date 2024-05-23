@@ -68,9 +68,6 @@ function MyCourses() {
             </h1>
             <div className="assignment-container">
                 <Assignment editMode={false}/>
-                <Assignment editMode={false}/>
-                <Assignment editMode={false}/>
-                <Assignment editMode={false}/>
             </div>
         </div>
     );
