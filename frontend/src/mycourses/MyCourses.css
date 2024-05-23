@@ -111,3 +111,77 @@
     border-radius: 10px;
     border: none;
 }
+
+.assignment {
+    display: flex;
+    font-family: 'TitilliumWeb', Arial, sans-serif;
+    background-color: #FEFFBA;
+    border-radius: 10px;
+    width: fit-content;
+    height: fit-content;
+    padding: 5px;
+    margin: 10px;
+}
+
+.assignment-status {
+    display: block;
+    width: fit-content;
+}
+
+.assignment-status-image {
+    display: block;
+    width: 100px;
+    height: 100px;
+    background-color: white;
+    border-radius: 20px;
+    border: 1px solid black;
+    margin: 5px;
+}
+
+.assignment-status-dropdown {
+    font-family: 'TitilliumWeb', Arial, sans-serif;
+    width: 100px;
+    height: 30px;
+    border-radius: 5px;
+    margin: 5px;
+}
+
+.assignment-content {
+    width: 500px;
+    height: fit-content;
+    display: inline;
+}
+
+.assignment-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 5px;
+}
+
+.assignment-header-left {
+    display: flex;
+    justify-content: left;
+}
+
+.assignment-name {
+    font-size: 20px;
+}
+
+.assignment-priority {
+    margin-left: 5px;
+    padding: 5px;
+    background-color: green;
+    border-radius: 5px;
+}
+
+.assignment-course {
+    margin-left: 5px;
+    padding: 5px;
+    font-size: 16px;
+    justify-self: flex-end;
+}
+
+.assignment-body {
+    margin: 5px;
+}
