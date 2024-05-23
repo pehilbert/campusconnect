@@ -218,7 +218,7 @@ app.post("/updateuser", verifyToken, async (req, res) => {
         let result = await users.updateOne({_id : new ObjectId(req.user.id)}, {$set : req.body.newValues});
         console.log("Sucessfully updated user, result object:", result);
 
-        if (result.modifiedCount === 1) {
+        if (result.modifiedCount === 1 || result.matchedCount === 1) {
             res.status(201).send({ 
                 message: "User profile updated successfully", 
             });
@@ -384,7 +384,7 @@ app.post("/editcourse/:id", verifyToken, async (req, res) => {
         let result = await courses.updateOne({_id : new ObjectId(req.params.id)}, {$set : req.body.newValues});
         console.log("Sucessfully updated course, result object:", result);
 
-        if (result.modifiedCount === 1) {
+        if (result.modifiedCount === 1 || result.matchedCount === 1) {
             res.status(201).send({ 
                 message: "Course edited successfully", 
             });
@@ -423,7 +423,201 @@ app.post("/dropcourse/:id", verifyToken, async (req, res) => {
             })
         } else {
             res.status(404).send({
-                message : "User not found"
+                message : "Course not found"
+            })
+        }
+    } catch (error) {
+        console.error("Error with database:", error);
+        res.status(500).send({
+            message : "Something went wrong, try again later"
+        });
+    } finally {
+        if (client) {
+            client.close();
+        }
+    }
+});
+
+/*
+Assignments CRUD operations
+*/
+
+// Adds an assignment to a certain course
+app.post("/addassignment/:course_id", verifyToken, async (req, res) => {
+    let client;
+
+    try {
+        client = await connectToMongo();
+        db = client.db(dbName);
+        courses = db.collection("courses");
+        assignments = db.collection("assignments");
+
+        let course = await courses.findOne({_id : new ObjectId(req.params.course_id)});
+
+        if (!course) {
+            res.status(404).send({
+                message : "Course for new assignment not found"
+            });
+        } else {
+            let result = await assignments.insertOne({
+                course_id : new ObjectId(req.params.course_id),
+                name : req.body.name,
+                description : req.body.description,
+                deadline : req.body.deadline || null,
+                priority : req.body.priority,
+                status : req.body.status
+            });
+    
+            if (result.insertedId) {
+                res.status(201).send({
+                    courseId : result.insertedId
+                });
+            } else {
+                res.status(500).send({
+                    message : "Failed to add assignment"
+                });
+            }
+        }
+    } catch (error) {
+        console.error("Something went wrong with the database:", error);
+        res.status(500).send({
+            message : "Something went wrong, try again later"
+        });
+    } finally {
+        if (client) {
+            client.close();
+        }
+    }
+});
+
+// Gets all assignments for a requesting user, grouped by course
+// (course ID's mapped to arrays of assignments)
+app.get("/userassignments", verifyToken, async (req, res) => {
+    let client;
+
+    try {
+        client = await connectToMongo();
+        let db = client.db(dbName);
+        let courseCollection = db.collection("courses");
+        let assignmentCollection = db.collection("assignments");
+
+        // get all courses for the user
+        let courses = await courseCollection.find({user_id : new ObjectId(req.user.id)}, {projection : {_id : 0}}).toArray();
+        let result = {};
+
+        // get all assignments for each course
+        for (let i = 0; i < course.length; i++) {
+            let assignments = await assignmentCollection.find({course_id : new ObjectId(courses[i]._id)}).toArray();
+
+            // add the array of assignments to the resulting object with its corresponding course
+            result[courses[i]._id] = assignments;
+        }
+
+        res.status(200).send(result);
+    } catch (error) {
+        console.error("Something went wrong with the database:", error);
+        res.status(500).send({
+            message : "Something went wrong, try again later"
+        });
+    } finally {
+        if (client) {
+            client.close();
+        }
+    }
+});
+
+// Gets all assignments for a certain course
+app.get("/courseassignments/:course_id", async (req, res) => {
+    let client;
+
+    try {
+        client = await connectToMongo();
+        let db = client.db(dbName);
+        let courses = db.collection("courses");
+        let assignments = db.collection("assignments");
+
+        // make sure the course exists
+        let course = await courses.findOne({_id : new ObjectId(req.params.course_id)});
+
+        if (!course) {
+            res.status(404).send({
+                message : "Course not found"
+            });
+        } else {
+            let result = await assignments.find({course_id : new ObjectId(req.params.course_id)}).toArray();
+            res.status(200).send(result);
+        }
+    } catch (error) {
+        console.error("Something went wrong with the database:", error);
+        res.status(500).send({
+            message : "Something went wrong, try again later"
+        });
+    } finally {
+        if (client) {
+            client.close();
+        }
+    }
+});
+
+// Updates a certain assignment by ID
+app.post("/updateassignment/:assignment_id", verifyToken, async (req, res) => {
+    let client;
+
+    try {
+        let client = await connectToMongo();
+        let db = client.db(dbName);
+        let assignments = db.collection("assignments");
+
+        if (!req.body.newValues) {
+            client.close();
+            return res.status(400).send({
+                message : "Must provide values to update"
+            });
+        }
+
+        let result = await assignments.updateOne({_id : new ObjectId(req.params.assignment_id)}, {$set : req.body.newValues});
+        console.log("Sucessfully updated assignment, result object:", result);
+
+        if (result.modifiedCount === 1 || result.matchedCount === 1) {
+            res.status(201).send({ 
+                message: "Course edited successfully", 
+            });
+        } else {
+            res.status(404).send({
+                message : "Course not found"
+            })
+        }
+    } catch (error) {
+        console.error("Error with database:", error);
+        res.status(500).send({
+            message : "Something went wrong, try again later"
+        });
+    } finally {
+        if (client) {
+            client.close();
+        }
+    }
+});
+
+// Deletes an assignment by ID
+app.post("/deleteassignment/:assignment_id", verifyToken, async (req, res) => {
+    let client;
+
+    try {
+        client = await connectToMongo();
+        let db = client.db(dbName);
+        let assignments = db.collection("assignments");
+
+        let result = await assignments.deleteOne({_id : new ObjectId(req.params.assignment_id)});
+        console.log("Sucessfully deleted assignment, result object:", result);
+
+        if (result.deletedCount === 1) {
+            res.status(201).send({
+                message : "Assignment deleted successfully"
+            })
+        } else {
+            res.status(404).send({
+                message : "Assignment not found"
             })
         }
     } catch (error) {
