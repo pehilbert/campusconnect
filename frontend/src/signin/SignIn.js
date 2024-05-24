@@ -67,7 +67,7 @@ function SignIn() {
                         placeholder="Username"
                         required
                         value={username}
-                        onChange={(e) => setUsername(e.target.value)}
+                        onChange={(e) => setUsername(e.target.value.trim())}
                     />
                 </label>
                 <br />
@@ -80,7 +80,7 @@ function SignIn() {
                         placeholder="Password"
                         required
                         value={password}
-                        onChange={(e) => setPassword(e.target.value)}
+                        onChange={(e) => setPassword(e.target.value.trim())}
                     />
                 </label>
                 <button className="signin-button" type="submit">Sign In</button>

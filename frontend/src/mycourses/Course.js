@@ -241,7 +241,7 @@ function Course(props) {
                             type="text"
                             value={values.courseCode || ""}
                             placeholder="Course Code"
-                            onChange={(e) => handleChange("courseCode", e.target.value)}
+                            onChange={(e) => handleChange("courseCode", e.target.value.trim())}
                             required
                         />
                         <input
@@ -249,7 +249,7 @@ function Course(props) {
                             type="text"
                             value={values.courseName || ""}
                             placeholder="Course Title"
-                            onChange={(e) => handleChange("courseName", e.target.value)}
+                            onChange={(e) => handleChange("courseName", e.target.value.trimStart())}
                             required
                         />
                         <p className="course-normal">Instructor(s):</p>
@@ -265,7 +265,7 @@ function Course(props) {
                                 type="text"
                                 value={newInstructor}
                                 placeholder="Instructor name"
-                                onChange={(e) => setNewInstructor(e.target.value)}
+                                onChange={(e) => setNewInstructor(e.target.value.trimStart())}
                             />
                             <button type="button" className="course-add-button" onClick={() => {addInstructor(newInstructor)}}>+</button>
                         </div>

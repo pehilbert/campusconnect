@@ -241,7 +241,7 @@ function Assignment(props) {
                     required
                     placeholder="Assignment Name"
                     value={values.name || ""}
-                    onChange={(e) => handleChange("name", e.target.value)}
+                    onChange={(e) => handleChange("name", e.target.value.trimStart())}
                 />
                 <select 
                     className="assignment-dropdown-input"
@@ -284,7 +284,7 @@ function Assignment(props) {
                     required
                     placeholder="Description"
                     value={values.description || ""}
-                    onChange={(e) => handleChange("description", e.target.value)}
+                    onChange={(e) => handleChange("description", e.target.value.trimStart())}
                 />
                 <br />
                 <button className="assignment-save-button" type="submit">Save</button>
@@ -325,7 +325,7 @@ function Assignment(props) {
                 </div>
                 <div className="assignment-body">
                     <p className="assignment-normal">
-                        {new Date(displayObject.deadline).toDateString()}, {convertTo12Hr(new Date(displayObject.deadline).toTimeString().substring(0, 5))}
+                        Due {new Date(displayObject.deadline).toDateString()}, {convertTo12Hr(new Date(displayObject.deadline).toTimeString().substring(0, 5))}
                     </p>
                     <p className="assignment-normal">{displayObject.description}</p>
                 </div>

@@ -104,7 +104,7 @@ function SignUp() {
                         placeholder="Email"
                         required
                         value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        onChange={(e) => setEmail(e.target.value.trim())}
                     />
                 </label>
                 <br/>
@@ -117,7 +117,7 @@ function SignUp() {
                         placeholder="Username"
                         required
                         value={username}
-                        onChange={(e) => setUsername(e.target.value)}
+                        onChange={(e) => setUsername(e.target.value.trim())}
                     />
                 </label>
                 <br />
@@ -130,7 +130,7 @@ function SignUp() {
                         placeholder="Password"
                         required
                         value={password}
-                        onChange={(e) => setPassword(e.target.value)}
+                        onChange={(e) => setPassword(e.target.value.trim())}
                     />
                 </label>
                 <br/>
@@ -143,7 +143,7 @@ function SignUp() {
                         placeholder="Confirm password"
                         required
                         value={passwordCopy}
-                        onChange={(e) => setPasswordCopy(e.target.value)}
+                        onChange={(e) => setPasswordCopy(e.target.value.trim())}
                     />
                 </label>
                 <br/>

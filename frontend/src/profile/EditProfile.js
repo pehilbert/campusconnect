@@ -104,7 +104,7 @@ function EditProfile() {
                         placeholder="First Name"
                         required
                         value={values.firstName || ""}
-                        onChange={(e) => handleChange("firstName", e.target.value)}
+                        onChange={(e) => handleChange("firstName", e.target.value.trim())}
                     />
                 </label>
                 <br/>
@@ -117,7 +117,7 @@ function EditProfile() {
                         placeholder="Last Name"
                         required
                         value={values.lastName || ""}
-                        onChange={(e) => handleChange("lastName", e.target.value)}
+                        onChange={(e) => handleChange("lastName", e.target.value.trim())}
                     />
                 </label>
                 <br/>
@@ -130,7 +130,7 @@ function EditProfile() {
                         placeholder="School"
                         required
                         value={values.school || ""}
-                        onChange={(e) => handleChange("school", e.target.value)}
+                        onChange={(e) => handleChange("school", e.target.value.trimStart())}
                     />
                 </label>
                 <br/>
@@ -144,7 +144,7 @@ function EditProfile() {
                         pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
                         required
                         value={values.phoneNumber || ""}
-                        onChange={(e) => handleChange("phoneNumber", e.target.value)}
+                        onChange={(e) => handleChange("phoneNumber", e.target.value.trim())}
                     />
                 </label>
                 <br/>
