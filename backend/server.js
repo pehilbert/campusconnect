@@ -412,8 +412,13 @@ app.post("/dropcourse/:id", verifyToken, async (req, res) => {
         client = await connectToMongo();
         let db = client.db(dbName);
         let courses = db.collection("courses");
+        let assignments = db.collection("assignments");
 
         let result = await courses.deleteOne({_id : new ObjectId(req.params.id)});
+
+        // make sure to also delete any assignments associated with this course
+        await assignments.deleteMany({course_id : new Object(req.params.id)});
+
         console.log("Sucessfully deleted course, result object:", result);
 
         if (result.deletedCount === 1) {

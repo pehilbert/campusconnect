@@ -67,7 +67,7 @@ function MyCourses() {
                 setAssignments(assignmentsList);
             })
             .catch(error => {
-                console.error("An error occurred fetching courses:", error);
+                console.error("An error occurred fetching assignments:", error);
             });
     }, [authContext, authContext.authToken, addingAssignment, refreshNum]);
 
@@ -96,14 +96,13 @@ function MyCourses() {
             <h1 className="section-title todo-title">
                 To-Do
                 <button className="add-remove" onClick={() => setAddingAssignment(true)}>+</button>
-                <button className="add-remove">-</button>
             </h1>
             <div className="assignment-container">
                 {assignments.map((assignment, index) => (
                     <Assignment key={index} displayObject={assignment} courses={courses} editMode={false} refreshFunction={refresh}/>
                 ))}
                 {addingAssignment ? (
-                    <Assignment editMode={true} courses={courses} stateFunction={setAddingAssignment} />
+                    <Assignment newAssignment={true} editMode={true} courses={courses} stateFunction={setAddingAssignment} />
                 ) : (
                     <></>
                 )}
