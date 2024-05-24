@@ -8,7 +8,9 @@ import "./MyCourses.css";
 function MyCourses() {
     const authContext = useAuth();
     const [courses, setCourses] = useState([]);
+    const [assignments, setAssignments] = useState([]);
     const [addingCourse, setAddingCourse] = useState(false);
+    const [addingAssignment, setAddingAssignment] = useState(false);
     const [refreshNum, changeRefreshNum] = useState(0);
 
     const refresh = () => {
@@ -39,6 +41,36 @@ function MyCourses() {
         }
     }, [authContext, authContext.authToken, addingCourse, refreshNum]);
 
+    useEffect(() => {
+        fetch("http://localhost:5000/myassignments", {
+                method : "GET",
+                headers : {
+                    "authorization" : "Bearer " + authContext.authToken
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(response);
+                }
+
+                return response.json();
+            })
+            .then(data => {
+                let assignmentsList = [];
+
+                for (const key in data) {
+                    for (const assignmentKey in data[key]) {
+                        assignmentsList.push(data[key][assignmentKey]);
+                    }
+                }
+
+                setAssignments(assignmentsList);
+            })
+            .catch(error => {
+                console.error("An error occurred fetching courses:", error);
+            });
+    }, [authContext, authContext.authToken, addingAssignment, refreshNum]);
+
     if (!authContext.authToken) {
         return (
             <SignIn />
@@ -63,11 +95,18 @@ function MyCourses() {
             </div>
             <h1 className="section-title todo-title">
                 To-Do
-                <button className="add-remove">+</button>
+                <button className="add-remove" onClick={() => setAddingAssignment(true)}>+</button>
                 <button className="add-remove">-</button>
             </h1>
             <div className="assignment-container">
-                <Assignment editMode={false}/>
+                {assignments.map((assignment, index) => (
+                    <Assignment key={index} displayObject={assignment} courses={courses} editMode={false} refreshFunction={refresh}/>
+                ))}
+                {addingAssignment ? (
+                    <Assignment editMode={true} courses={courses} stateFunction={setAddingAssignment} />
+                ) : (
+                    <></>
+                )}
             </div>
         </div>
     );

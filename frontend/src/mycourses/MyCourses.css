@@ -117,7 +117,7 @@
     font-family: 'TitilliumWeb', Arial, sans-serif;
     background-color: #FEFFBA;
     border-radius: 10px;
-    width: fit-content;
+    width: 600px;
     height: fit-content;
     padding: 5px;
     margin: 10px;
@@ -146,6 +146,19 @@
     height: 30px;
     border-radius: 5px;
     margin: 5px;
+}
+
+.assignment-edit-button {
+    font-family: 'TitilliumWeb', Arial, sans-serif;
+    font-size: 16px;
+    display: block;
+    margin: 5px;
+    padding: 2px;
+    width: 50px;
+    height: fit-content;
+    background-color: white;
+    border: none;
+    border-radius: 5px;
 }
 
 .assignment-content {
@@ -186,4 +199,48 @@
 
 .assignment-body {
     margin: 5px;
+}
+
+.assignment-text-input {
+    font-family: 'TitilliumWeb', Arial, sans-serif;
+    font-size: 16px;
+    padding: 5px;
+    margin: 5px;
+    width: 200px;
+    height: 25px;
+    border-radius: 10px;
+}
+
+.assignment-dropdown-input {
+    font-family: 'TitilliumWeb', Arial, sans-serif;
+    font-size: 14px;
+    margin: 5px;
+    width: 100px;
+    height: 30px;
+    border-radius: 10px;
+}
+
+.assignment-input-label {
+    font-family: 'TitilliumWeb', Arial, sans-serif;
+    margin: 5px;
+}
+
+.assignment-long-text-input {
+    font-family: 'TitilliumWeb', Arial, sans-serif;
+    font-size: 14px;
+    padding: 5px;
+    margin: 5px;
+    width: 350px;
+    height: 25px;
+    border-radius: 10px;
+}
+
+.assignment-save-button {
+    font-family: 'TitilliumWeb', Arial, sans-serif;
+    margin: 5px;
+    background-color: #79E7FF;
+    border: none;
+    font-size: 16px;
+    padding: 5px;
+    border-radius: 5px;
 }

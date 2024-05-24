@@ -310,7 +310,6 @@ app.get("/mycourses", verifyToken, async (req, res) => {
         let courses = db.collection("courses");
 
         let result = await courses.find({user_id : new ObjectId(req.user.id)}).toArray();
-        console.log("Courses fetched for user:", result);
 
         res.status(200).send(result);
     } catch (error) {
@@ -443,16 +442,16 @@ Assignments CRUD operations
 */
 
 // Adds an assignment to a certain course
-app.post("/addassignment/:course_id", verifyToken, async (req, res) => {
+app.post("/addassignment", verifyToken, async (req, res) => {
     let client;
-
+    console.log("Body received:", req.body);
     try {
         client = await connectToMongo();
         db = client.db(dbName);
         courses = db.collection("courses");
         assignments = db.collection("assignments");
 
-        let course = await courses.findOne({_id : new ObjectId(req.params.course_id)});
+        let course = await courses.findOne({_id : new ObjectId(req.body.course_id)});
 
         if (!course) {
             res.status(404).send({
@@ -460,7 +459,7 @@ app.post("/addassignment/:course_id", verifyToken, async (req, res) => {
             });
         } else {
             let result = await assignments.insertOne({
-                course_id : new ObjectId(req.params.course_id),
+                course_id : new ObjectId(req.body.course_id),
                 name : req.body.name,
                 description : req.body.description,
                 deadline : req.body.deadline || null,
@@ -470,12 +469,14 @@ app.post("/addassignment/:course_id", verifyToken, async (req, res) => {
     
             if (result.insertedId) {
                 res.status(201).send({
-                    courseId : result.insertedId
+                    assignmentId : result.insertedId
                 });
+                console.log("Added assignment!");
             } else {
                 res.status(500).send({
                     message : "Failed to add assignment"
                 });
+                console.log("Something went wrong :(");
             }
         }
     } catch (error) {
@@ -492,7 +493,7 @@ app.post("/addassignment/:course_id", verifyToken, async (req, res) => {
 
 // Gets all assignments for a requesting user, grouped by course
 // (course ID's mapped to arrays of assignments)
-app.get("/userassignments", verifyToken, async (req, res) => {
+app.get("/myassignments", verifyToken, async (req, res) => {
     let client;
 
     try {
@@ -502,13 +503,12 @@ app.get("/userassignments", verifyToken, async (req, res) => {
         let assignmentCollection = db.collection("assignments");
 
         // get all courses for the user
-        let courses = await courseCollection.find({user_id : new ObjectId(req.user.id)}, {projection : {_id : 0}}).toArray();
+        let courses = await courseCollection.find({user_id : new ObjectId(req.user.id)}).toArray();
         let result = {};
 
         // get all assignments for each course
-        for (let i = 0; i < course.length; i++) {
+        for (let i = 0; i < courses.length; i++) {
             let assignments = await assignmentCollection.find({course_id : new ObjectId(courses[i]._id)}).toArray();
-
             // add the array of assignments to the resulting object with its corresponding course
             result[courses[i]._id] = assignments;
         }
@@ -562,6 +562,7 @@ app.get("/courseassignments/:course_id", async (req, res) => {
 // Updates a certain assignment by ID
 app.post("/updateassignment/:assignment_id", verifyToken, async (req, res) => {
     let client;
+    console.log("Body received:", req.body);
 
     try {
         let client = await connectToMongo();
@@ -573,6 +574,10 @@ app.post("/updateassignment/:assignment_id", verifyToken, async (req, res) => {
             return res.status(400).send({
                 message : "Must provide values to update"
             });
+        }
+
+        if (req.body.newValues.course_id) {
+            req.body.newValues.course_id = new ObjectId(req.body.newValues.course_id);
         }
 
         let result = await assignments.updateOne({_id : new ObjectId(req.params.assignment_id)}, {$set : req.body.newValues});
