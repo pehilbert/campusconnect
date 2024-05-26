@@ -340,7 +340,8 @@ app.post("/addcourse", verifyToken, async (req, res) => {
             courseCode : req.body.courseCode,
             courseName : req.body.courseName,
             instructors : req.body.instructors,
-            meetings : req.body.meetings
+            meetings : req.body.meetings,
+            location : req.body.location
         });
 
         if (result.insertedId) {

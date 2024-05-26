@@ -34,7 +34,8 @@ function Course(props) {
                         courseCode : values.courseCode,
                         courseName : values.courseName,
                         instructors : values.instructors,
-                        meetings : values.meetings
+                        meetings : values.meetings,
+                        location : values.location
                     }
                 })
             })
@@ -248,7 +249,7 @@ function Course(props) {
                             className="course-input"
                             type="text"
                             value={values.courseName || ""}
-                            placeholder="Course Title"
+                            placeholder="Course Name"
                             onChange={(e) => handleChange("courseName", e.target.value.trimStart())}
                             required
                         />
@@ -313,6 +314,14 @@ function Course(props) {
                             </label>
                             <button type="button" className="course-add-button" onClick={() => {addMeeting(newMeeting)}}>+</button>
                         </div>
+                        <input
+                            className="course-input"
+                            type="text"
+                            value={values.location || ""}
+                            placeholder="Location"
+                            onChange={(e) => handleChange("location", e.target.value.trimStart())}
+                            required
+                        />
                         <button type="submit" className="course-save-button">Save</button>
                     </form>
                     {props.newCourse ? (<></>) : (<button className="drop-button" onClick={handleDrop}>Drop</button>)}
@@ -334,6 +343,7 @@ function Course(props) {
                             {meeting.day}, {covertTo12Hr(meeting.startTime)}-{covertTo12Hr(meeting.endTime)}
                         </p>
                     ))}
+                    <p className="course-normal">{displayObject.location}</p>
                 </>
             )}
         </div>
