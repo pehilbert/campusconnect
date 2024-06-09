@@ -1,20 +1,14 @@
 import "./Calendar.css";
 import Event from "./Event";
 
-function Day({date}) {
+function Day({date, courses}) {
     const isCurrentDate = 
         date.getMonth() === new Date().getMonth() &&
         date.getDate() === new Date().getDate() &&
         date.getFullYear() === new Date().getFullYear();
 
     const testEvent = {
-        name : "Some event",
-        description : "This is a super cool event and you will have fun!!!",
-        location : "My house",
-        start : "14:20",
-        end : "17:50",
-        color : "#E19191",
-        allDay : false
+        
     }
 
     function convertTo12Hr(time24) {
@@ -41,7 +35,7 @@ function Day({date}) {
                 (<p className="day-normal">{convertTo12Hr(`${date.getHours()}:${date.getMinutes()}`)}</p>) : 
                 (<></>)
             }
-            <Event props={testEvent}/>
+            <Event displayObject={testEvent} courses={courses} editMode={true}/>
         </div>
     )
 }

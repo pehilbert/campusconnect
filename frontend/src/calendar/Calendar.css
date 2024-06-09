@@ -97,3 +97,7 @@
     font-family: 'TitilliumWeb', Arial, sans-serif;
     font-size: 16px;
 }
+
+.event-edit-button {
+    float: right;
+}

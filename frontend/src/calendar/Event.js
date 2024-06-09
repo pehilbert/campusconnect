@@ -1,4 +1,12 @@
-function Event({props}) {
+import {useState} from "react";
+import {useAuth} from "../AuthContext";
+
+function Event(props) {
+    const [displayObject, setDisplayObject] = useState(props.displayObject || {});
+    const [values, setValues] = useState(props.displayObject || {});
+    const [editMode, setEditMode] = useState(props.editMode || false);
+    const courseOptions = props.courses || [];
+
     function convertTo12Hr(time24) {
         if (time24) {
             // Split the input time string into hours and minutes
@@ -20,23 +28,104 @@ function Event({props}) {
         return "";
     }
 
+    const handleChange = (key, value) => {
+        setValues(prevValues => ({
+            ...prevValues,
+            [key]: value
+        }));
+
+        console.log(values);
+    };
+
+    const handleSave = (event) => {
+        event.preventDefault();
+        setDisplayObject(values);
+        setEditMode(false);
+    }
+
+    if (editMode === true) {
+        return (
+            <div className="event">
+                <form onSubmit={handleSave}>
+                    <label className="event-input-label">
+                        Start:
+                        <input
+                            className="event-time-input"
+                            type="datetime-local"
+                            required
+                            value={values.start || ""}
+                            onChange={(e) => handleChange("start", e.target.value)}
+                        />
+                    </label>
+                    <label className="event-input-label">
+                        End:
+                        <input
+                            className="event-time-input"
+                            type="datetime-local"
+                            required
+                            value={values.end || ""}
+                            onChange={(e) => handleChange("end", e.target.value)}
+                        />
+                    </label>
+                    <input
+                        className="event-text-input"
+                        placeholder="Event Title"
+                        type="text"
+                        required
+                        value={values.name || ""}
+                        onChange={(e) => handleChange("name", e.target.value)}
+                    />
+                    <input
+                        className="event-text-input"
+                        placeholder="Event Location"
+                        type="text"
+                        required
+                        value={values.location || ""}
+                        onChange={(e) => handleChange("location", e.target.value)}
+                    />
+                    <input
+                        className="event-text-input"
+                        placeholder="Event Description"
+                        type="text"
+                        required
+                        value={values.description || ""}
+                        onChange={(e) => handleChange("description", e.target.value)}
+                    />
+                    <select
+                        className="event-dropdown-input"
+                        required
+                        value={values.course_id || ""}
+                        onChange={(e) => handleChange("course_id", e.target.value)}
+                    >
+                        <option default value="">Course</option>
+                        {courseOptions.map((element, index) => (
+                            <option key={index} value={element._id}>{element.courseCode}</option>
+                        ))}
+                    </select>
+                    <button type="submit">Save</button>
+                </form>
+            </div>
+        )
+    }
+
     return (
-        props.allDay ? (
-            <div className="allday-event" style={{"background-color" : props.color}}>
-                <p className="event-header"><b>{props.name}</b></p>
+        displayObject.allDay ? (
+            <div className="allday-event" style={{"background-color" : displayObject.color}}>
+                <p className="event-header"><b>{displayObject.name}</b></p>
             </div>
         ) : (
-            <div className="event" style={{"background-color" : props.color}}>
+            <div className="event" style={{"background-color" : displayObject.color}}>
                 <div className="event-left">
                     <p className="event-normal"><b>
-                        {convertTo12Hr(props.start)}<br/>-{convertTo12Hr(props.end)}
+                        {convertTo12Hr(displayObject.start.split("T")[1])}<br/>-{convertTo12Hr(displayObject.end.split("T")[1])}
                     </b></p>
-                    <p className="event-normal"><b>{props.course}</b></p>
+                    <p className="event-normal"><b>{displayObject.course}</b></p>
                 </div>
                 <div className="event-right">
-                    <p className="event-header"><b>{props.name}</b></p>
-                    <p className="event-header">{props.location}</p>
-                    <p className="event-normal">{props.description}</p>
+                    <button className="event-edit-button" onClick={() => setEditMode(true)}>Edit</button>
+                    <p className="event-header"><b>{displayObject.name}</b></p>
+                    <p className="event-header">{displayObject.location}</p>
+                    <p className="event-normal">{displayObject.description}</p>
                 </div>
             </div>
         )
