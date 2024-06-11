@@ -98,6 +98,72 @@
     font-size: 16px;
 }
 
-.event-edit-button {
+.event-edit-form {
+    width: 100%;
+}
+
+.event-input-label {
+    font-family: 'TitilliumWeb', Arial, sans-serif;
+    font-size: 16px;
+    width: 100px;
+    margin: 5px;
+}
+
+.event-date-input {
+    font-family: 'TitilliumWeb', Arial, sans-serif;
+    font-size: 14px;
+    border-radius: 10px;
+    padding: 2px;
+    margin: 5px;
+}
+
+.event-text-input {
+    font-family: 'TitilliumWeb', Arial, sans-serif;
+    font-size: 14px;
+    border-radius: 10px;
+    padding: 2px;
+    margin: 5px;
+    width: calc(100% - 16px)
+}
+
+.event-dropdown-input {
+    font-family: 'TitilliumWeb', Arial, sans-serif;
+    font-size: 14px;
+    border-radius: 10px;
+    padding: 2px;
+    margin: 5px;
+}
+
+.event-back-button, .event-edit-button {
     float: right;
+    font-family: 'TitilliumWeb', Arial, sans-serif;
+    margin: 5px;
+    width: 50px;
+    height: 30px;
+    border-radius: 5px;
+    background-color: white;
+}
+
+.event-color-input {
+    margin: 5px;
+    border-radius: 5px;
+    width: 50px;
+    height: 23px;
+}
+
+.event-edit-button {
+    margin: 0px;
+}
+
+.event-save-button {
+    font-family: 'TitilliumWeb', Arial, sans-serif;
+    display: block;
+    margin-left: auto;
+    margin-top: 5px;
+    margin-right: auto;
+    margin-bottom: 5px;
+    border-radius: 5px;
+    width: 75px;
+    height: 30px;
+    background-color: white;
 }

@@ -1,5 +1,5 @@
 import {useState} from "react";
-import {useAuth} from "../AuthContext";
+import "./Calendar.css";
 
 function Event(props) {
     const [displayObject, setDisplayObject] = useState(props.displayObject || {});
@@ -28,6 +28,16 @@ function Event(props) {
         return "";
     }
 
+    function getCourseCode(courseId) {
+        for (let i = 0; i < courseOptions.length; i++) {
+            if (courseOptions[i]._id === courseId) {
+                return courseOptions[i].courseCode || "";
+            }
+        }
+
+        return "";
+    }
+
     const handleChange = (key, value) => {
         setValues(prevValues => ({
             ...prevValues,
@@ -36,6 +46,11 @@ function Event(props) {
 
         console.log(values);
     };
+
+    const handleBack = (event) => {
+        setValues(displayObject);
+        setEditMode(false);
+    }
 
     const handleSave = (event) => {
         event.preventDefault();
@@ -46,27 +61,30 @@ function Event(props) {
     if (editMode === true) {
         return (
             <div className="event">
-                <form onSubmit={handleSave}>
+                <form className="event-edit-form" onSubmit={handleSave}>
+                    <button className="event-back-button" onClick={handleBack}>Back</button>
                     <label className="event-input-label">
                         Start:
                         <input
-                            className="event-time-input"
+                            className="event-date-input"
                             type="datetime-local"
                             required
                             value={values.start || ""}
                             onChange={(e) => handleChange("start", e.target.value)}
                         />
                     </label>
+                    <br/>
                     <label className="event-input-label">
                         End:
                         <input
-                            className="event-time-input"
+                            className="event-date-input"
                             type="datetime-local"
                             required
                             value={values.end || ""}
                             onChange={(e) => handleChange("end", e.target.value)}
                         />
                     </label>
+                    <br/>
                     <input
                         className="event-text-input"
                         placeholder="Event Title"
@@ -75,6 +93,7 @@ function Event(props) {
                         value={values.name || ""}
                         onChange={(e) => handleChange("name", e.target.value)}
                     />
+                    <br/>
                     <input
                         className="event-text-input"
                         placeholder="Event Location"
@@ -83,6 +102,7 @@ function Event(props) {
                         value={values.location || ""}
                         onChange={(e) => handleChange("location", e.target.value)}
                     />
+                    <br/>
                     <input
                         className="event-text-input"
                         placeholder="Event Description"
@@ -91,18 +111,30 @@ function Event(props) {
                         value={values.description || ""}
                         onChange={(e) => handleChange("description", e.target.value)}
                     />
+                    <br/>
+                    <label className="event-input-label">
+                        Color:
+                        <input
+                            className="event-color-input"
+                            type="color"
+                            required
+                            value={values.color || "#ffffff"}
+                            onChange={(e) => handleChange("color", e.target.value)}
+                        />
+                    </label>
+                    <br/>
                     <select
                         className="event-dropdown-input"
-                        required
                         value={values.course_id || ""}
                         onChange={(e) => handleChange("course_id", e.target.value)}
                     >
-                        <option default value="">Course</option>
+                        <option default value="">Course (Optional)</option>
                         {courseOptions.map((element, index) => (
                             <option key={index} value={element._id}>{element.courseCode}</option>
                         ))}
                     </select>
-                    <button type="submit">Save</button>
+                    <br/>
+                    <button className="event-save-button" type="submit">Save</button>
                 </form>
             </div>
         )
@@ -110,16 +142,16 @@ function Event(props) {
 
     return (
         displayObject.allDay ? (
-            <div className="allday-event" style={{"background-color" : displayObject.color}}>
+            <div className="allday-event" style={{"backgroundColor" : displayObject.color}}>
                 <p className="event-header"><b>{displayObject.name}</b></p>
             </div>
         ) : (
-            <div className="event" style={{"background-color" : displayObject.color}}>
+            <div className="event" style={{"backgroundColor" : displayObject.color}}>
                 <div className="event-left">
                     <p className="event-normal"><b>
                         {convertTo12Hr(displayObject.start.split("T")[1])}<br/>-{convertTo12Hr(displayObject.end.split("T")[1])}
                     </b></p>
-                    <p className="event-normal"><b>{displayObject.course}</b></p>
+                    <p className="event-normal"><b>{getCourseCode(displayObject.course_id)}</b></p>
                 </div>
                 <div className="event-right">
                     <button className="event-edit-button" onClick={() => setEditMode(true)}>Edit</button>
