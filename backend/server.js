@@ -648,7 +648,7 @@ Calendar CRUD Operations
 */
 
 // Creates a new calendar for the requesting user (requires token)
-app.post("/createcalendar", verifyToken, async (res, req) => {
+app.post("/createcalendar", verifyToken, async (req, res) => {
     let client;
 
     try {
@@ -685,7 +685,7 @@ app.post("/createcalendar", verifyToken, async (res, req) => {
 });
 
 // Gets all calendars for the requesting user (requires token)
-app.get("/myassignments", verifyToken, async (res, req) => {
+app.get("/mycalendars", verifyToken, async (req, res) => {
     let client;
 
     try {
@@ -693,7 +693,7 @@ app.get("/myassignments", verifyToken, async (res, req) => {
         let db = client.db(dbName);
         let calendars = db.collection("calendars");
 
-        let result = calendars.find({user_id : new ObjectId(req.user.id)}).toArray();
+        let result = await calendars.find({user_id : new ObjectId(req.user.id)}).toArray();
         res.status(200).send(result);
     } catch (error) {
         console.error("Error with database:", error);
@@ -708,7 +708,7 @@ app.get("/myassignments", verifyToken, async (res, req) => {
 });
 
 // Updates info for a calendar (requires token)
-app.post("/editcalendar/:id", verifyToken, async (res, req) => {
+app.post("/editcalendar/:id", verifyToken, async (req, res) => {
     let client;
 
     try {
@@ -748,7 +748,7 @@ app.post("/editcalendar/:id", verifyToken, async (res, req) => {
 });
 
 // Deletes a certain calendar (requires token)
-app.post("/deletecalendar/:id", verifyToken, async (res, req) => {
+app.post("/deletecalendar/:id", verifyToken, async (req, res) => {
     let client;
 
     try {

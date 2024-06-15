@@ -17,6 +17,52 @@
     width: 50%;
 }
 
+.view-calendars-button {
+    width: 200px;
+    height: 50px;
+    margin-top: 10px;
+
+    font-family: 'TitilliumWeb', Arial, sans-serif;
+    background-color: white;
+    border-radius: 10px;
+    font-size: 21px;
+}
+
+.calendars-container {
+    width: 300px;
+    height: fit-content;
+    margin-top: 10px;
+}
+
+.calendar {
+    background-color: white;
+    border-radius: 5px;
+    padding: 5px;
+    margin-top: 5px;
+}
+
+.calendar-header {
+    display: flex;
+}
+
+.calendar-name {
+    font-family: 'TitilliumWeb', Arial, sans-serif;
+    font-size: 21px;
+}
+
+.calendar-description {
+    font-family: 'TitilliumWeb', Arial, sans-serif;
+    font-size: 16px;
+}
+
+.calendar-color {
+    width: 21px;
+    height: 21px;
+    border-radius: 50%;
+    margin-left: 5px;
+    margin-top: 5px;
+}
+
 .welcome-message {
     text-align: left;
     color: white;
