@@ -644,6 +644,163 @@ app.post("/deleteassignment/:assignment_id", verifyToken, async (req, res) => {
 });
 
 /*
+Calendar CRUD Operations
+*/
+
+// Creates a new calendar for the requesting user (requires token)
+app.post("/createcalendar", verifyToken, async (res, req) => {
+    let client;
+
+    try {
+        client = await connectToMongo();
+        let db = client.db(dbName);
+        let calendars = db.collection("calendars");
+
+        let result = await calendars.insertOne({
+            user_id : new ObjectId(req.body.user_id),
+            name : req.body.name,
+            description : req.body.description,
+            color : req.body.color
+        });
+
+        if (result.insertedId) {
+            res.status(201).send({
+                courseId : result.insertedId
+            });
+        } else {
+            res.status(500).send({
+                message : "Failed to add calendar"
+            });
+        }
+    } catch (error) {
+        console.error("Error with database:", error);
+        res.status(500).send({
+            message : "Something went wrong, try again later"
+        });
+    } finally {
+        if (client) {
+            client.close();
+        }
+    }
+});
+
+// Gets all calendars for the requesting user (requires token)
+app.get("/myassignments", verifyToken, async (res, req) => {
+    let client;
+
+    try {
+        client = await connectToMongo();
+        let db = client.db(dbName);
+        let calendars = db.collection("calendars");
+
+        let result = calendars.find({user_id : new ObjectId(req.user.id)}).toArray();
+        res.status(200).send(result);
+    } catch (error) {
+        console.error("Error with database:", error);
+        res.status(500).send({
+            message : "Something went wrong, try again later"
+        });
+    } finally {
+        if (client) {
+            client.close();
+        }
+    }
+});
+
+// Updates info for a calendar (requires token)
+app.post("/editcalendar/:id", verifyToken, async (res, req) => {
+    let client;
+
+    try {
+        client = await connectToMongo();
+        let db = client.db(dbName);
+        let calendars = db.collection("calendars");
+
+        if (!req.body.newValues) {
+            client.close();
+            return res.status(400).send({
+                message : "Must provide values to update"
+            });
+        }
+
+        let result = await calendars.updateOne({_id : new ObjectId(req.params.id)}, {$set : req.body.newValues});
+        console.log("Sucessfully updated calendar, result object:", result);
+
+        if (result.modifiedCount === 1 || result.matchedCount === 1) {
+            res.status(201).send({ 
+                message: "Calendar edited successfully", 
+            });
+        } else {
+            res.status(404).send({
+                message : "Calendar not found"
+            })
+        }
+    } catch (error) {
+        console.error("Error with database:", error);
+        res.status(500).send({
+            message : "Something went wrong, try again later"
+        });
+    } finally {
+        if (client) {
+            client.close();
+        }
+    }
+});
+
+// Deletes a certain calendar (requires token)
+app.post("/deletecalendar/:id", verifyToken, async (res, req) => {
+    let client;
+
+    try {
+        client = await connectToMongo();
+        let db = client.db(dbName);
+        let calendars = db.collection("calendars");
+        let events = db.collection("events");
+
+        let result = await calendars.deleteOne({_id : new ObjectId(req.params.id)});
+
+        // make sure to also delete any assignments associated with this course
+        await events.deleteMany({calendar_id : new Object(req.params.id)});
+
+        console.log("Sucessfully deleted calendar, result object:", result);
+
+        if (result.deletedCount === 1) {
+            res.status(201).send({
+                message : "Calendar deleted successfully"
+            })
+        } else {
+            res.status(404).send({
+                message : "Calendar not found"
+            })
+        }
+    } catch (error) {
+        console.error("Error with database:", error);
+        res.status(500).send({
+            message : "Something went wrong, try again later"
+        });
+    } finally {
+        if (client) {
+            client.close();
+        }
+    }
+});
+
+/*
+Event CRUD Operations
+*/
+
+// Creates a new event (requires token)
+
+// Gets all events for a user. Calendar id's are mapped to an array of event objects for
+// the events associated with that calendar (requires token)
+
+// Gets all events for a calendar given by its ID (requires token)
+
+// Updates an event by its ID (requires token)
+
+// Deletes an event by its ID (requires token)
+
+/*
 Authentication routes
 */
 app.post("/login", async (req, res) => {
