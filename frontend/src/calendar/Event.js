@@ -45,7 +45,7 @@ function Event(props) {
         }));
 
         console.log(values);
-    };
+    }
 
     const handleBack = (event) => {
         setValues(displayObject);

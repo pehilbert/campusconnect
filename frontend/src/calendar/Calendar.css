@@ -63,6 +63,50 @@
     margin-top: 5px;
 }
 
+.calendar-edit-button {
+    float: right;
+    background-color: white;
+    border-radius: 5px;
+    width: 50px;
+    height: 25px;
+}
+
+.calendar-name-input {
+    font-family: 'TitilliumWeb', Arial, sans-serif;
+    width: 60%;
+    height: 20px;
+    border-radius: 5px;
+    padding: 5px;
+    font-size: 14px;
+    margin-right: 10px;
+}
+
+.calendar-color-input {
+    width: 30;
+    height: 30px;
+    border-radius: 5px;
+}
+
+.calendar-description-input {
+    font-family: 'TitilliumWeb', Arial, sans-serif;
+    margin-top: 10px;
+    border-radius: 5px;
+    width: 95%;
+    height: 20px;
+    padding: 5px;
+}
+
+.calendar-save-button {
+    margin-top: 10px;
+    background-color: white;
+    width: 100px;
+    height: 30px;
+    border-radius: 5px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 .welcome-message {
     text-align: left;
     color: white;
