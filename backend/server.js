@@ -243,9 +243,15 @@ app.post("/deleteuser", verifyToken, async (req, res) => {
         let client = await connectToMongo();
         let db = client.db(dbName);
         let users = db.collection("users");
+        let courses = db.collection("courses");
+        let calendars = db.collection("calendars");
 
         let result = await users.deleteOne({_id : new ObjectId(req.user.id)});
         console.log("Sucessfully deleted user, result object:", result);
+
+        // cascade, ensure any associated data is also deleted (courses and calendars)
+        await courses.deleteMany({user_id : new ObjectId(req.user_id)});
+        await calendars.deleteMany({user_id : new ObjectId(req.user_id)});
 
         if (result.deletedCount === 1) {
             res.status(201).send({
