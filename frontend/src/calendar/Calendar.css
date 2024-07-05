@@ -28,6 +28,16 @@
     font-size: 21px;
 }
 
+.add-calendar-button {
+    width: 40px;
+    height: 40px;
+    font-size: 30px;
+    margin-left: 10px;
+    background-color: #79E7FF;
+    border: none;
+    border-radius: 10px;
+}
+
 .calendars-container {
     width: 300px;
     height: fit-content;
@@ -63,12 +73,17 @@
     margin-top: 5px;
 }
 
-.calendar-edit-button {
+.calendar-edit-button, .calendar-delete-button {
     float: right;
     background-color: white;
     border-radius: 5px;
     width: 50px;
     height: 25px;
+}
+
+.calendar-delete-button {
+    background-color: red;
+    color: white;
 }
 
 .calendar-name-input {

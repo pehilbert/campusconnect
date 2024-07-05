@@ -46,10 +46,20 @@ function Course(props) {
 
                 return response.json();
             })
-            .then(data => console.log(data.message))
+            .then(data => {
+                console.log(data.message);
+
+                if (props.stateFunction) {
+                    props.stateFunction(false);
+                }
+    
+                if (props.refreshFunction) {
+                    props.refreshFunction();
+                }
+            })
             .catch(error => {
                 console.error("An error occurred editing a course:", error);
-            })
+            });
         } else {
             fetch("http://localhost:5000/addcourse", {
                 method : "POST",
@@ -66,7 +76,17 @@ function Course(props) {
 
                 return response.json();
             })
-            .then(data => console.log("Course added:", data.courseId))
+            .then(data => {
+                console.log("Course added:", data.courseId);
+
+                if (props.stateFunction) {
+                    props.stateFunction(false);
+                }
+    
+                if (props.refreshFunction) {
+                    props.refreshFunction();
+                }
+            })
             .catch(error => {
                 console.error("An error occurred adding a course:", error);
             });
@@ -114,19 +134,20 @@ function Course(props) {
 
             return response.json();
         })
-        .then(data => console.log(data.message))
+        .then(data => {
+            console.log(data.message);
+
+            if (props.stateFunction) {
+                props.stateFunction(false);
+            }
+
+            if (props.refreshFunction) {
+                props.refreshFunction();
+            }
+        })
         .catch(error => {
             console.error("An error occurred dropping a course:", error);
         })
-
-        // If this is an "add course" component, set the state to no longer adding a course
-        if (props.stateFunction) {
-            props.stateFunction(false);
-        }
-
-        if (props.refreshFunction) {
-            props.refreshFunction();
-        }
     }
 
     const handleChange = (key, value) => {

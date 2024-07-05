@@ -657,7 +657,7 @@ app.post("/createcalendar", verifyToken, async (req, res) => {
         let calendars = db.collection("calendars");
 
         let result = await calendars.insertOne({
-            user_id : new ObjectId(req.body.user_id),
+            user_id : new ObjectId(req.user.id),
             name : req.body.name,
             description : req.body.description,
             color : req.body.color
@@ -665,7 +665,7 @@ app.post("/createcalendar", verifyToken, async (req, res) => {
 
         if (result.insertedId) {
             res.status(201).send({
-                courseId : result.insertedId
+                calendarId : result.insertedId
             });
         } else {
             res.status(500).send({

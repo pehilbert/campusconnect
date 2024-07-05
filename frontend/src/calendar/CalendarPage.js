@@ -12,6 +12,8 @@ function CalendarPage() {
     const [calendars, setCalendars] = useState([]);
     const [currentDate, setCurrentDate] = useState(new Date());
     const [calendarsVisible, setCalendarsVisible] = useState(false);
+    const [addingCalendar, setAddingCalendar] = useState(false);
+    const [refreshCounter, setRefreshCounter] = useState(0);
 
     // Sets the current date/time
     useEffect(() => {
@@ -37,7 +39,7 @@ function CalendarPage() {
                 console.error("An error occurred getting user info:", error);
             })
         }
-    }, [authContext, authContext.id]);
+    }, [authContext, authContext.id, refreshCounter, addingCalendar]);
 
     useEffect(() => {
         if (authContext.authToken) {
@@ -61,7 +63,7 @@ function CalendarPage() {
                 console.error("An error occurred fetching courses:", error);
             });
         }
-    }, [authContext, authContext.authToken]);
+    }, [authContext, authContext.authToken, refreshCounter, addingCalendar]);
 
     useEffect(() => {
         if (authContext.authToken) {
@@ -85,21 +87,24 @@ function CalendarPage() {
                 console.error("An error occurred fetching courses:", error);
             });
         }
-    }, [authContext, authContext.authToken]);
+    }, [authContext, authContext.authToken, refreshCounter, addingCalendar]);
 
     function getDateString(date) {
         const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
         return date.toLocaleDateString('en-US', options);
     }
 
-    if (!authContext.authToken) {
-        return <SignIn />
+    function refreshCalendars() {
+        setRefreshCounter(refreshCounter + 1);
     }
 
-    const testCalendar = {
-        name : "Classes",
-        color : "#ff0000",
-        description : "This is for my classes!"
+    function handleAddCalendar() {
+        setCalendarsVisible(true);
+        setAddingCalendar(true);
+    }
+
+    if (!authContext.authToken) {
+        return <SignIn />
     }
 
     return (
@@ -112,13 +117,15 @@ function CalendarPage() {
                 <button className="view-calendars-button" onClick={() => setCalendarsVisible(!calendarsVisible)}>
                     {calendarsVisible ? "Close" : "View Calendars"}
                 </button>
+                <button className="add-calendar-button" onClick={handleAddCalendar}>+</button>
                 {calendarsVisible ? (
                     <div className="calendars-container">
-                        <Calendar editMode={false} displayObject={testCalendar} />
-                        <Calendar editMode={false} displayObject={testCalendar} />
-                        {calendars.map((index, element) => (
-                            <Calendar key={index} editMode={false} displayObject={element} />
+                        {calendars.map((calendar, index) => (
+                            <Calendar key={index} editMode={false} displayObject={calendar} refreshFunction={refreshCalendars}/>
                         ))}
+                        {addingCalendar ? (
+                            <Calendar editMode={true} stateFunction={setAddingCalendar} refreshFunction={refreshCalendars}/>
+                        ) : (<></>)}
                     </div>
                 ) : (<></>)}
             </div>
