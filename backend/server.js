@@ -795,16 +795,175 @@ app.post("/deletecalendar/:id", verifyToken, async (req, res) => {
 Event CRUD Operations
 */
 
-// Creates a new event (requires token)
+// Creates a new event for a user (requires token)
+app.post("/createevent", verifyToken, async (req, res) => {
+    let client;
 
-// Gets all events for a user. Calendar id's are mapped to an array of event objects for
+    try {
+        client = await connectToMongo();
+        let db = client.db(dbName);
+        let events = db.collection("events");
+
+        let result = await calendars.insertOne({
+            user_id : new ObjectId(req.user.id),
+            calendar_id : new ObjectId(req.body.calendar_id),
+            name : req.body.name,
+            location : req.body.location,
+            description : req.body.description,
+            allDay : req.body.allDay,
+            start : req.body.start,
+            end : req.body.end,
+            course_id : new ObjectId(req.body.course_id)
+        });
+
+        if (result.insertedId) {
+            res.status(201).send({
+                calendarId : result.insertedId
+            });
+        } else {
+            res.status(500).send({
+                message : "Failed to add event"
+            });
+        }
+    } catch (error) {
+        console.error("Error with database:", error);
+        res.status(500).send({
+            message : "Something went wrong, try again later"
+        });
+    } finally {
+        if (client) {
+            client.close();
+        }
+    }
+});
+
+// Gets all events for a user. Calendar id's (as strings) are mapped to an array of event objects for
 // the events associated with that calendar (requires token)
+app.get("/myevents", verifyToken, async (req, res) => {
+    let client;
+
+    try {
+        client = await connectToMongo();
+        let db = client.db(dbName);
+        let calendars = db.collection("calendars");
+        let events = db.collection("events");
+
+        let calendarIds = await calendars.find({user_id : new ObjectId(req.user.id)}, {_id : true}).toArray();
+        let result = {};
+
+        for (let i = 0; i < calendarIds.length; i++) {
+            let calendarEvents = await events.find({calendar_id : new ObjectId(calendarIds[i]._id)}).toArray();
+            result[calendarIds[i]._id.toString()] = calendarEvents;
+        }
+
+        res.status(200).send(result);
+    } catch (error) {
+        console.error("Error with database:", error);
+        res.status(500).send({
+            message : "Something went wrong, try again later"
+        });
+    } finally {
+        if (client) {
+            client.close();
+        }
+    }
+});
 
 // Gets all events for a calendar given by its ID (requires token)
+app.get("/eventsfromcalendar/:id", verifyToken, async (req, res) => {
+    let client;
+
+    try {
+        client = await connectToMongo();
+        let db = client.db(dbName);
+        let events = db.collection("events");
+
+        let result = await events.find({calendar_id : new ObjectId(req.params.id)}).toArray();
+        res.status(200).send(result);
+    } catch (error) {
+        console.error("Error with database:", error);
+        res.status(500).send({
+            message : "Something went wrong, try again later"
+        });
+    } finally {
+        if (client) {
+            client.close();
+        }
+    }
+});
 
 // Updates an event by its ID (requires token)
+app.post("/editevent/:id", verifyToken, async (req, res) => {
+    let client;
+
+    try {
+        client = await connectToMongo();
+        let db = client.db(dbName);
+        let events = db.collection("events");
+
+        if (!req.body.newValues) {
+            client.close();
+            return res.status(400).send({
+                message : "Must provide values to update"
+            });
+        }
+
+        let result = await events.updateOne({_id : new ObjectId(req.params.id)}, {$set : req.body.newValues});
+        console.log("Sucessfully updated calendar, result object:", result);
+
+        if (result.modifiedCount === 1 || result.matchedCount === 1) {
+            res.status(201).send({ 
+                message: "Event edited successfully", 
+            });
+        } else {
+            res.status(404).send({
+                message : "Event not found"
+            });
+        }
+    } catch (error) {
+        console.error("Error with database:", error);
+        res.status(500).send({
+            message : "Something went wrong, try again later"
+        });
+    } finally {
+        if (client) {
+            client.close();
+        }
+    }
+});
 
 // Deletes an event by its ID (requires token)
+app.post("/deletevent/:id", verifyToken, async (req, res) => {
+    let client;
+
+    try {
+        client = await connectToMongo();
+        let db = client.db(dbName);
+        let events = db.collection("events");
+
+        let result = await events.deleteOne({_id : new ObjectId(req.params.id)});
+        console.log("Sucessfully deleted event, result object:", result);
+
+        if (result.deletedCount === 1) {
+            res.status(201).send({
+                message : "Event deleted successfully"
+            })
+        } else {
+            res.status(404).send({
+                message : "Event+ not found"
+            })
+        }
+    } catch (error) {
+        console.error("Error with database:", error);
+        res.status(500).send({
+            message : "Something went wrong, try again later"
+        });
+    } finally {
+        if (client) {
+            client.close();
+        }
+    }
+});
 
 /*
 Authentication routes
