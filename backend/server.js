@@ -1,3 +1,5 @@
+const {connectToMongo} = require("./database/database_util");
+const db_util = require("./database/database_util");
 const express = require("express");
 const { MongoClient, ObjectId } = require("mongodb");
 const cors = require("cors");
@@ -20,16 +22,6 @@ app.use(cors({
 
 // Middleware to parse JSON bodies
 app.use(express.json());
-
-// Database connection function
-async function connectToMongo() {
-    try {
-        let client = await MongoClient.connect(url);
-        return client;
-    } catch (error) {
-        throw error;
-    }
-}
 
 // Token verification middleware
 function verifyToken(req, res, next) {
