@@ -33,7 +33,7 @@ module.exports = {
         let client;
 
         try {
-            client = await connectToMongo();
+            client = await module.exports.connectToMongo();
             const db = client.db(DB_NAME);
 
             const collection = await db.collection(collectionName, { strict: true });
@@ -54,7 +54,7 @@ module.exports = {
     inserted ID, or throws an error if unable to insert
     */
     createDocument : async (collectionName, toInsert) => {
-        return await this.performOperation(collectionName, async (collection) => {
+        return await module.exports.performOperation(collectionName, async (collection) => {
             let result = await collection.insertOne(toInsert);
 
             if (!result.insertedId) {
@@ -66,13 +66,13 @@ module.exports = {
     },
 
     /* 
-    Retrieves a single document in a collection with a certain ID and returns
-    the object, returns null if not found. Assumes the given ID is already an ObjectId
+    Retrieves a single document in a collection with a filter object and returns
+    the found object, returns null if not found. Assumes the given ID is already an ObjectId
     object
     */
-    getDocument : async (collectionName, searchId) => {
-        return await this.performOperation(collectionName, async (collection) => {
-            return await collection.findOne({_id : searchId});
+    getDocument : async (collectionName, filter) => {
+        return await module.exports.performOperation(collectionName, async (collection) => {
+            return await collection.findOne(filter);
         });
     },
 
@@ -81,7 +81,7 @@ module.exports = {
     an array of the found documents
     */
     getDocuments : async (collectionName, filter) => {
-        return await this.performOperation(collectionName, async (collection) => {
+        return await module.exports.performOperation(collectionName, async (collection) => {
             return await collection.find(filter).toArray();
         });
     },
@@ -92,7 +92,7 @@ module.exports = {
     ObjectId object
     */
     updateDocument : async (collectionName, docId, update) => {
-        return await this.performOperation(collectionName, async (collection) => {
+        return await module.exports.performOperation(collectionName, async (collection) => {
             return await collection.updateOne({_id : docId}, update);
         });
     },
@@ -102,7 +102,7 @@ module.exports = {
     object, returns the result object
     */
     updateDocuments : async (collectionName, filter, update) => {
-        return await this.performOperation(collectionName, async (collection) => {
+        return await module.exports.performOperation(collectionName, async (collection) => {
             return await collection.updateMany(filter, update);
         });
     },
@@ -112,7 +112,7 @@ module.exports = {
     the result object. Assumes the given ID is already an ObjectId object
     */
     deleteDocument : async (collectionName, docId) => {
-        return await this.performOperation(collectionName, async (collection) => {
+        return await module.exports.performOperation(collectionName, async (collection) => {
             return await collection.deleteOne({_id : docId});
         })
     },
@@ -122,7 +122,7 @@ module.exports = {
     the result object
     */
     deleteDocuments : async (collectionName, filter) => {
-        return await this.performOperation(collectionName, async (collection) => {
+        return await module.exports.performOperation(collectionName, async (collection) => {
             return await collection.deleteMany(filter);
         })
     }

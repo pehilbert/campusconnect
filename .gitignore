@@ -11,6 +11,9 @@
 # production
 */build
 
+# environment variables
+/backend/auth/vars.js
+
 # misc
 */.DS_Store
 */.env.local
