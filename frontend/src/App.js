@@ -7,7 +7,6 @@ import SignUp from "./signup/SignUp.js";
 import SignIn from "./signin/SignIn.js";
 import EditProfile from "./profile/EditProfile.js";
 import MyCourses from "./mycourses/MyCourses.js";
-import CalendarPage from "./calendar/CalendarPage.js";
 
 import "./App.css";
 
@@ -23,7 +22,6 @@ function App() {
                         <Route path="signin" element={<SignIn />}/>
                         <Route path="edit-profile" element={<EditProfile />}/>
                         <Route path="my-courses" element={<MyCourses />}/>
-                        <Route path="my-calendar" element={<CalendarPage />}/>
                     </Route>
                 </Routes>
             </BrowserRouter>

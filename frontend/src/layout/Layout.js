@@ -19,7 +19,6 @@ function Layout() {
                     <img className="logo" alt="logo" src="./clockwork_text.svg"></img>
                     <div className="links">
                         <Link className="nav-link" to="/">Home</Link>
-                        <Link className="nav-link" to="/my-calendar">My Calendar</Link>
                         <Link className="nav-link" to="/my-courses">My Courses</Link>
                         <Link className="nav-link" to="/edit-profile">My Profile</Link>
                         {/* Conditionally render either Sign In or Sign Out button */}
