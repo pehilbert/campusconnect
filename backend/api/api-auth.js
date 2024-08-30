@@ -1,5 +1,5 @@
 // Defines API endpoints having to do with user authentication
-
+const dbUtil = require("../database/database-util")
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const {SECRET_KEY} = require("../vars");
@@ -27,7 +27,7 @@ module.exports = {
                     return res.status(400).send({message : "Not all info provided"});
                 }
 
-                let user = await db_util.getDocument("users", {username : req.body.username});
+                let user = await dbUtil.getDocument("users", {username : req.body.username});
 
                 if (user && user.password && bcrypt.compareSync(req.body.password, user.password)) {
                     let token = jwt.sign({id : user._id}, SECRET_KEY, {expiresIn : "1h"});
