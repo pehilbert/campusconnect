@@ -2,16 +2,8 @@
 // - Database connection
 // - CRUD Operations
 
-/*
-Require statements
-*/
 const {MongoClient} = require("mongodb");
-
-/*
-Constants
-*/
-const URI = "mongodb://localhost:27017";
-const DB_NAME = "clockwork";
+const {DB_URI, DB_NAME} = require("../vars");
 
 /*
 Functions
@@ -21,7 +13,7 @@ module.exports = {
     Database connection function, returns resulting client object given a connection url
     */
     connectToMongo : async () => {
-        return await MongoClient.connect(URI);
+        return await MongoClient.connect(DB_URI);
     },
 
     /*

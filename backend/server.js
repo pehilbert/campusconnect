@@ -1,8 +1,9 @@
-const {initializeAPI} = require("./api/api");
 const express = require("express");
 const cors = require("cors");
 
-const PORT = 5000;
+const {PORT} = require("./vars");
+const api = require("./api/api-main");
+const {connectToMongo} = require("./database/database-util")
 
 const app = express();
 
@@ -24,9 +25,9 @@ connectToMongo()
         throw error;
     });
 
-// Initialize API Endpoints
+// Initialize API
 console.log("Initializing API...");
-initializeAPI(app);
+api.initialize(app);
 
 // Start the server
 app.listen(PORT, () => {

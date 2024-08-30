@@ -4,7 +4,7 @@ function Test() {
   const [testMessage, setTestMessage] = useState("Loading test message...");
 
   function getTestMessage() {
-    fetch("http://localhost:5000/test")
+    fetch("http://localhost:5000/api/test")
       .then(res => {
         if (!res.ok) {
           throw new Error("HTTP response not OK");

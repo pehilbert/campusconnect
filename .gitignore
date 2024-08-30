@@ -12,7 +12,7 @@
 */build
 
 # environment variables
-/backend/auth/vars.js
+/backend/vars.js
 
 # misc
 */.DS_Store

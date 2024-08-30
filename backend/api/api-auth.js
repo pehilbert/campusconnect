@@ -1,23 +1,11 @@
+// Defines API endpoints having to do with user authentication
+
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const {SECRET_KEY} = require("../auth/vars");
+const {SECRET_KEY} = require("../vars");
 
 module.exports = {
-    /*
-    Adds API routes to the given Express app
-    */
-    initializeAPI : (app) => {
-        /*
-        Test endpoint, simply returns a message string
-        */
-        app.get("/test", (req, res) => {
-            res.send("Welcome to Clockwork!");
-        });
-
-        /*
-        Authentication
-        */
-
+    initialize : (app) => {
         /*
         Endpoint: /api/auth/login
         Description: Attempts to log a user in with the given credentials
