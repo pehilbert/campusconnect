@@ -7,7 +7,7 @@ const {SECRET_KEY} = require("../vars");
 module.exports = {
     initialize : (app) => {
         /*
-        Endpoint: /api/auth/login
+        Endpoint: POST /api/auth/login
         Description: Attempts to log a user in with the given credentials
         and gives a new token if successful
         Authentication: None

@@ -48,11 +48,6 @@ module.exports = {
     createDocument : async (collectionName, toInsert) => {
         return await module.exports.performOperation(collectionName, async (collection) => {
             let result = await collection.insertOne(toInsert);
-
-            if (!result.insertedId) {
-                throw Error("Failed to insert document");
-            }
-
             return result.insertedId;
         });
     },
@@ -62,9 +57,9 @@ module.exports = {
     the found object, returns null if not found. Assumes the given ID is already an ObjectId
     object
     */
-    getDocument : async (collectionName, filter) => {
+    getDocument : async (collectionName, filter, projection = null) => {
         return await module.exports.performOperation(collectionName, async (collection) => {
-            return await collection.findOne(filter);
+            return await collection.findOne(filter, projection);
         });
     },
 
@@ -72,9 +67,9 @@ module.exports = {
     Retrieves documents in a collection with a given filter object and returns
     an array of the found documents
     */
-    getDocuments : async (collectionName, filter) => {
+    getDocuments : async (collectionName, filter, projection = null) => {
         return await module.exports.performOperation(collectionName, async (collection) => {
-            return await collection.find(filter).toArray();
+            return await collection.find(filter, projection).toArray();
         });
     },
 
@@ -83,9 +78,9 @@ module.exports = {
     returns the result object. Assumes the given ID is already an
     ObjectId object
     */
-    updateDocument : async (collectionName, docId, update) => {
+    updateDocument : async (collectionName, filter, update) => {
         return await module.exports.performOperation(collectionName, async (collection) => {
-            return await collection.updateOne({_id : docId}, update);
+            return await collection.updateOne(filter, update);
         });
     },
 
@@ -103,9 +98,9 @@ module.exports = {
     Deletes a single document in a collection with a certain ID, and returns
     the result object. Assumes the given ID is already an ObjectId object
     */
-    deleteDocument : async (collectionName, docId) => {
+    deleteDocument : async (collectionName, filter) => {
         return await module.exports.performOperation(collectionName, async (collection) => {
-            return await collection.deleteOne({_id : docId});
+            return await collection.deleteOne(filter);
         })
     },
 
