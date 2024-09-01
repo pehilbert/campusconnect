@@ -3,5 +3,7 @@
 module.exports = {
     SECRET_KEY : "",
     SALT_ROUNDS : 0,
-    PORT : 5000
+    PORT : 5000,
+    DB_URI : "",
+    DB_NAME : ""
 }

@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {Link, useNavigate} from 'react-router-dom';
 import {useAuth} from "../AuthContext";
 import "./SignIn.css";
+import {ENDPOINT_HOST} from "../vars";
 
 function SignIn() {
     const [username, setUsername] = useState("");
@@ -13,7 +14,7 @@ function SignIn() {
     const handleSubmit = (event) => {
         event.preventDefault();
 
-        fetch("http://localhost:5000/login", {
+        fetch(ENDPOINT_HOST + "/api/auth/login", {
             method : "POST",
             headers : {
                 "Content-Type" : "application/json"  

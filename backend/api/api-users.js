@@ -44,7 +44,7 @@ module.exports = {
                 let result = await dbUtil.createDocument("users", req.body);
                 console.log("User successfully created with ID " + result);
 
-                return res.status(201, {
+                return res.status(201).send({
                     message : "User successfully created!",
                     new_id : result
                 });

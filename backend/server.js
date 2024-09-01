@@ -12,6 +12,9 @@ app.use(cors({
     origin: "http://localhost:3000"
 }));
 
+// Make it able to parse JSON
+app.use(express.json());
+
 // Test database connection
 console.log("Testing database connection...");
 

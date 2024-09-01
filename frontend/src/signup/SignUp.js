@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {Link, useNavigate} from 'react-router-dom';
 import {useAuth} from "../AuthContext";
 import "./SignUp.css";
+import {ENDPOINT_HOST} from "../vars";
 
 function SignUp() {
     const [email, setEmail] = useState("");
@@ -19,7 +20,7 @@ function SignUp() {
             return setResultMessage("Passwords must match!");
         }
 
-        fetch("http://localhost:5000/createuser", {
+        fetch(ENDPOINT_HOST + "/api/users/create", {
             method : "POST",
             headers : {
                 "Content-Type" : "application/json"  
@@ -44,8 +45,9 @@ function SignUp() {
         })
         .then(data => {
             setResultMessage(data.message);
+            console.log(data.message);
             
-            fetch("http://localhost:5000/login", {
+            fetch(ENDPOINT_HOST + "/api/auth/login", {
                 method : "POST",
                 headers : {
                     "Content-Type" : "application/json"  
