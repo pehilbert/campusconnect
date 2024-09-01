@@ -93,7 +93,7 @@ module.exports = {
         */
         app.get("/api/users/myinfo", verifyToken, async (req, res) => {
             try {
-                let result = await dbUtil.getDocument("users", {_id : ObjectId(req.user.id)}, {password : false});
+                let result = await dbUtil.getDocument("users", {_id : new ObjectId(req.user.id)}, {password : false});
 
                 if (result) {
                     console.log("Successfully retrieved user info for " + result.username);
@@ -134,7 +134,7 @@ module.exports = {
         */
         app.get("/api/users/profile/:id", async (req, res) => {
             try {
-                let result = await dbUtil.getDocument("users", {_id : ObjectId(req.params.id)}, 
+                let result = await dbUtil.getDocument("users", {_id : new ObjectId(req.params.id)}, 
                 {
                     username : true,
                     firstName : true,
@@ -184,7 +184,7 @@ module.exports = {
         */
         app.post("/api/users/updateme", verifyToken, async (req, res) => {
             try {
-                let result = await dbUtil.updateDocument("users", {_id : ObjectId(req.user.id)}, req.body.newValues);
+                let result = await dbUtil.updateDocument("users", {_id : new ObjectId(req.user.id)}, {$set : req.body.newValues});
 
                 if (result.matchedCount === 0) {
                     console.log("User not found, ID: " + req.user.id);
@@ -241,7 +241,7 @@ module.exports = {
         */
         app.post("/api/users/deleteme", verifyToken, async (req, res) => {
             try {
-                let result = await dbUtil.deleteDocument("users", {_id : ObjectId(req.user.id)});
+                let result = await dbUtil.deleteDocument("users", {_id : new ObjectId(req.user.id)});
 
                 if (result.deletedCount === 0) {
                     console.log("User not found, ID: " + req.user.id);

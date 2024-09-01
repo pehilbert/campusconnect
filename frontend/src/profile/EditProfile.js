@@ -2,7 +2,8 @@ import {useNavigate} from "react-router-dom";
 import {useState, useEffect} from "react";
 import {useAuth} from "../AuthContext";
 import SignIn from "../signin/SignIn";
-import "./EditProfile.css"
+import "./EditProfile.css";
+import { ENDPOINT_HOST } from "../vars";
 
 function EditProfile() {
     const [values, setValues] = useState({});
@@ -13,14 +14,13 @@ function EditProfile() {
     const handleSubmit = (event) => {
         event.preventDefault();
         
-        fetch("http://localhost:5000/updateuser", {
+        fetch(ENDPOINT_HOST + "/api/users/updateme", {
             method : "POST",
             headers : {
                 "authorization" : "Bearer " + authContext.authToken,
                 "content-type" : "application/json"
             },
             body : JSON.stringify({
-                username : authContext.username,
                 newValues : values
             })
         })
@@ -52,28 +52,36 @@ function EditProfile() {
         if (!authContext.authToken || !authContext.id) {
             navigate("/signin");
         } else {
-            const url = "http://localhost:5000/users/" + authContext.id;
-
-            fetch(url)
-                .then(response => {
+            fetch(ENDPOINT_HOST + "/api/users/myinfo", {
+                method : "GET",
+                headers : {
+                    "authorization" : "Bearer " + authContext.authToken
+                }
+            })
+            .then(response => {
+                return response.json().then(data => {
                     if (!response.ok) {
-                        throw new Error(`HTTP status ${response.status}`);
+                        let msg = data.message || "Unknown error";
+                        const error = new Error(msg);
+                        error.data = data;
+                        throw error;
                     }
-                    
-                    return response.json();
+    
+                    return data;
                 })
-                .then(data => {
-                    setValues({
-                        firstName : data.firstName,
-                        lastName : data.lastName,
-                        school : data.school,
-                        phoneNumber : data.phoneNumber,
-                        birthday : data.birthday
-                    })
+            })
+            .then(data => {
+                setValues({
+                    firstName : data.userInfo.firstName,
+                    lastName : data.userInfo.lastName,
+                    school : data.userInfo.school,
+                    phoneNumber : data.userInfo.phoneNumber,
+                    birthday : data.userInfo.birthday
                 })
-                .catch(error => {
-                    console.error("An error occured:", error);
-                });
+            })
+            .catch(error => {
+                console.error("An error occured:", error);
+            });
         }
     }, [authContext, authContext.authToken, authContext.username, navigate]);
     
