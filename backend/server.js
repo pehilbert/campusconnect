@@ -3,7 +3,8 @@ const cors = require("cors");
 
 const {PORT} = require("./vars");
 const api = require("./api/api-main");
-const {connectToMongo} = require("./database/database-util")
+const {connectToMongo} = require("./database/database-util");
+const {testMailjet} = require("./api/api-users");
 
 const app = express();
 

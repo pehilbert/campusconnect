@@ -5,5 +5,7 @@ module.exports = {
     SALT_ROUNDS : 0,
     PORT : 5000,
     DB_URI : "",
-    DB_NAME : ""
+    DB_NAME : "",
+    MJ_PUBLIC_APIKEY : "",
+    MJ_SECRET_KEY : ""
 }
