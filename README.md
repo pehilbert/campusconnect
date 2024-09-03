@@ -1,2 +1,2 @@
-# Clockwork
-A side project that is an all-in-one academic planner and calendar for university students.
+# CampusConnect
+A side project that is a social networking app for university students.
