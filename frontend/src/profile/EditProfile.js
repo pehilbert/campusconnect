@@ -92,12 +92,6 @@ function EditProfile() {
         }));
     };
 
-    if (!authContext.authToken) {
-        return (
-            <SignIn />
-        );
-    }
-
     return (
         <div className="EditProfile">
             <form className="edit-profile-form" onSubmit={handleSubmit}>

@@ -80,7 +80,7 @@ function SignUp() {
                 
                 authContext.login(data.token, data.id);
                 setResultMessage(data.message);
-                navigate("/edit-profile");
+                navigate("/verify");
             })
             .catch(error => {
                 setResultMessage(error.message);
