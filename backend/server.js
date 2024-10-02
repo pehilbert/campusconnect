@@ -1,10 +1,12 @@
 const express = require("express");
 const cors = require("cors");
 
-const {PORT} = require("./vars");
 const api = require("./api/api-main");
 const {connectToMongo} = require("./database/database-util");
 const {testMailjet} = require("./api/api-users");
+
+require("dotenv").config()
+const PORT = process.env.PORT;
 
 const app = express();
 

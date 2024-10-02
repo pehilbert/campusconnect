@@ -1,5 +1,9 @@
-const {SECRET_KEY} = require("../vars");
 const jwt = require("jsonwebtoken");
+
+const path = require("path");
+require("dotenv").config({path : path.resolve(__dirname, "../.env")});
+
+const SECRET_KEY = process.env.SECRET_KEY; 
 
 module.exports = {
     /*

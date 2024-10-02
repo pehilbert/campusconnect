@@ -2,7 +2,11 @@
 const dbUtil = require("../database/database-util")
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const {SECRET_KEY} = require("../vars");
+
+const path = require("path");
+require("dotenv").config({path : path.resolve(__dirname, "../.env")});
+
+const SECRET_KEY = process.env.SECRET_KEY; 
 
 module.exports = {
     initialize : (app) => {

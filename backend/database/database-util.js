@@ -3,7 +3,12 @@
 // - CRUD Operations
 
 const {MongoClient} = require("mongodb");
-const {DB_URI, DB_NAME} = require("../vars");
+
+const path = require("path");
+require("dotenv").config({path : path.resolve(__dirname, "../.env")});
+
+const DB_URI = process.env.DB_URI;
+const DB_NAME = process.env.DB_NAME;
 
 /*
 Functions

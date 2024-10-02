@@ -2,9 +2,14 @@ const dbUtil = require("../database/database-util");
 const {verifyToken} = require("../auth/token-handling");
 const bcrypt = require("bcrypt");
 const Mailjet = require("node-mailjet");
-
 const {ObjectId} = require("mongodb");
-const {SALT_ROUNDS, MJ_PUBLIC_APIKEY, MJ_SECRET_KEY} = require("../vars");
+
+const path = require("path");
+require("dotenv").config({path : path.resolve(__dirname, "../.env")});
+
+const SALT_ROUNDS = process.env.SALT_ROUNDS;
+const MJ_PUBLIC_APIKEY = process.env.MJ_PUBLIC_APIKEY;
+const MJ_SECRET_KEY = process.env.MJ_SECRET_KEY;
 
 function generateVerificationCode() {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
